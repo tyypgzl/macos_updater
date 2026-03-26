@@ -35,7 +35,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Leaf type definitions: FileHash (MODEL-02), UpdateProgress (MODEL-03), UpdateError sealed hierarchy (MODEL-04)
+- [x] 01-01-PLAN.md — Leaf type definitions: FileHash (MODEL-02), UpdateProgress (MODEL-03), UpdateError sealed hierarchy (MODEL-04)
 - [ ] 01-02-PLAN.md — Dependent types and barrel: UpdateInfo (MODEL-01), UpdateCheckResult (MODEL-05), barrel export update, copyWith unit tests
 - [ ] 01-03-PLAN.md — Platform interface: getCurrentVersion() return type change to Future<int> on interface, method channel, and test mock (API-06)
 
@@ -114,7 +114,7 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Not started | - |
+| 1. Foundation | 1/3 | In Progress|  |
 | 2. UpdateSource Contract | 0/TBD | Not started | - |
 | 3. Core Engine | 0/TBD | Not started | - |
 | 4. Public API | 0/TBD | Not started | - |
