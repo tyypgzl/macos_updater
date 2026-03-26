@@ -9,11 +9,11 @@ Requirements for v2.0.0 release. Each maps to roadmap phases.
 
 ### Data Models
 
-- [ ] **MODEL-01**: `UpdateInfo` model with version, buildNumber, remoteBaseUrl, and changedFiles list
+- [x] **MODEL-01**: `UpdateInfo` model with version, buildNumber, remoteBaseUrl, and changedFiles list
 - [x] **MODEL-02**: `FileHash` model with filePath, hash, and length (non-nullable, clean)
 - [x] **MODEL-03**: `UpdateProgress` model with totalBytes, receivedBytes, currentFile, completedFiles, totalFiles
 - [x] **MODEL-04**: Sealed `UpdateError` with subtypes: `NetworkError`, `HashMismatch`, `NoPlatformEntry`, `IncompatibleVersion`, `RestartFailed`
-- [ ] **MODEL-05**: Sealed `UpdateCheckResult` with `UpToDate` and `UpdateAvailable(UpdateInfo)` variants
+- [x] **MODEL-05**: Sealed `UpdateCheckResult` with `UpToDate` and `UpdateAvailable(UpdateInfo)` variants
 
 ### Core API
 
@@ -84,11 +84,11 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MODEL-01 | Phase 1 | Pending |
+| MODEL-01 | Phase 1 | Complete |
 | MODEL-02 | Phase 1 | Complete |
 | MODEL-03 | Phase 1 | Complete |
 | MODEL-04 | Phase 1 | Complete |
-| MODEL-05 | Phase 1 | Pending |
+| MODEL-05 | Phase 1 | Complete |
 | API-06 | Phase 1 | Complete |
 | API-01 | Phase 2 | Pending |
 | API-02 | Phase 2 | Pending |
