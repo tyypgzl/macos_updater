@@ -36,7 +36,8 @@ class MethodChannelDesktopUpdater extends DesktopUpdaterPlatform {
   }
 
   @override
-  Future<String?> getCurrentVersion() async {
-    return methodChannel.invokeMethod<String>("getCurrentVersion");
+  Future<int> getCurrentVersion() async {
+    final version = await methodChannel.invokeMethod<int>("getCurrentVersion");
+    return version!;
   }
 }
