@@ -28,8 +28,8 @@ Requirements for v2.0.0 release. Each maps to roadmap phases.
 ### Engine
 
 - [x] **ENG-01**: File hash comparison engine using Blake2b to determine changed files between local and remote
-- [ ] **ENG-02**: File downloader that streams individual changed files from remote URL to local staging
-- [ ] **ENG-03**: Stream-based update lifecycle emitting progress events during download
+- [x] **ENG-02**: File downloader that streams individual changed files from remote URL to local staging
+- [x] **ENG-03**: Stream-based update lifecycle emitting progress events during download
 
 ### Code Removal
 
@@ -93,8 +93,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | API-01 | Phase 2 | Complete |
 | API-02 | Phase 2 | Complete |
 | ENG-01 | Phase 3 | Complete |
-| ENG-02 | Phase 3 | Pending |
-| ENG-03 | Phase 3 | Pending |
+| ENG-02 | Phase 3 | Complete |
+| ENG-03 | Phase 3 | Complete |
 | API-03 | Phase 4 | Pending |
 | API-04 | Phase 4 | Pending |
 | API-05 | Phase 4 | Pending |
