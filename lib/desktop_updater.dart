@@ -7,7 +7,14 @@ import "package:desktop_updater/src/update_progress.dart";
 import "package:desktop_updater/src/version_check.dart";
 
 export "package:desktop_updater/src/app_archive.dart";
+export "package:desktop_updater/src/errors/update_check_result.dart";
+export "package:desktop_updater/src/errors/update_error.dart";
 export "package:desktop_updater/src/localization.dart";
+export "package:desktop_updater/src/models/file_hash.dart";
+export "package:desktop_updater/src/models/update_info.dart";
+// UpdateProgress from src/models re-exported below once v1 export is removed in Phase 5.
+// ignore: unused_shown_name
+export "package:desktop_updater/src/models/update_progress.dart" hide UpdateProgress;
 export "package:desktop_updater/src/update_progress.dart";
 export "package:desktop_updater/widget/update_dialog.dart";
 export "package:desktop_updater/widget/update_direct_card.dart";
