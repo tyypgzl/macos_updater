@@ -22,7 +22,7 @@ Requirements for v2.0.0 release. Each maps to roadmap phases.
 - [ ] **API-03**: `checkForUpdate(UpdateSource source)` function that compares local vs remote version and returns delta file list
 - [ ] **API-04**: `downloadUpdate(UpdateInfo info, {onProgress callback})` function that downloads only changed files with streaming progress
 - [ ] **API-05**: `applyUpdate()` function that triggers native restart via method channel
-- [ ] **API-06**: `getCurrentVersion()` function exposed on platform interface returning build number string
+- [x] **API-06**: `getCurrentVersion()` function exposed on platform interface returning build number string
 - [ ] **API-07**: `generateLocalFileHashes()` function that computes Blake2b hashes for the running app bundle
 
 ### Engine
@@ -89,7 +89,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | MODEL-03 | Phase 1 | Complete |
 | MODEL-04 | Phase 1 | Complete |
 | MODEL-05 | Phase 1 | Pending |
-| API-06 | Phase 1 | Pending |
+| API-06 | Phase 1 | Complete |
 | API-01 | Phase 2 | Pending |
 | API-02 | Phase 2 | Pending |
 | ENG-01 | Phase 3 | Pending |

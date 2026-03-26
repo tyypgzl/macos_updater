@@ -12,7 +12,7 @@ Refactor `desktop_updater` from a bundled-UI, hardcoded-URL update tool into a h
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Data models, sealed errors, and platform interface that everything else depends on
+- [x] **Phase 1: Foundation** - Data models, sealed errors, and platform interface that everything else depends on (completed 2026-03-26)
 - [ ] **Phase 2: UpdateSource Contract** - Abstract interface class that decouples engine from backend
 - [ ] **Phase 3: Core Engine** - Delta diffing, file download, and progress stream internals
 - [ ] **Phase 4: Public API** - Orchestrator wiring engine into clean function-based API
@@ -36,8 +36,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — Leaf type definitions: FileHash (MODEL-02), UpdateProgress (MODEL-03), UpdateError sealed hierarchy (MODEL-04)
-- [ ] 01-02-PLAN.md — Dependent types and barrel: UpdateInfo (MODEL-01), UpdateCheckResult (MODEL-05), barrel export update, copyWith unit tests
-- [ ] 01-03-PLAN.md — Platform interface: getCurrentVersion() return type change to Future<int> on interface, method channel, and test mock (API-06)
+- [x] 01-02-PLAN.md — Dependent types and barrel: UpdateInfo (MODEL-01), UpdateCheckResult (MODEL-05), barrel export update, copyWith unit tests
+- [x] 01-03-PLAN.md — Platform interface: getCurrentVersion() return type change to Future<int> on interface, method channel, and test mock (API-06)
 
 **UI hint**: no
 
@@ -114,7 +114,7 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/3 | In Progress|  |
+| 1. Foundation | 3/3 | Complete   | 2026-03-26 |
 | 2. UpdateSource Contract | 0/TBD | Not started | - |
 | 3. Core Engine | 0/TBD | Not started | - |
 | 4. Public API | 0/TBD | Not started | - |
