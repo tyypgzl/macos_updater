@@ -44,8 +44,8 @@ class MockDesktopUpdaterPlatform
   }
 
   @override
-  Future<String?> getCurrentVersion() {
-    return Future.value();
+  Future<int> getCurrentVersion() {
+    return Future.value(42);
   }
 
   @override

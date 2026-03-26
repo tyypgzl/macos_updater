@@ -84,7 +84,7 @@ Future<ItemModel?> versionCheckFunction({
 
     print("Latest version: ${latestVersion.shortVersion}");
 
-    late String? currentVersion;
+    late int currentVersion;
 
     if (Platform.isLinux) {
       final exePath = await File("/proc/self/exe").resolveSymbolicLinks();
@@ -94,21 +94,13 @@ Future<ItemModel?> versionCheckFunction({
       final versionJson = jsonDecode(await File(versionPath).readAsString());
 
       print("Current version: ${versionJson['build_number']}");
-      currentVersion = versionJson["build_number"];
+      currentVersion = int.parse(versionJson["build_number"].toString());
     } else {
-      await DesktopUpdater().getCurrentVersion().then(
-        (value) {
-          print("Current version: $value");
-          currentVersion = value;
-        },
-      );
+      currentVersion = await DesktopUpdater().getCurrentVersion();
+      print("Current version: $currentVersion");
     }
 
-    if (currentVersion == null) {
-      throw Exception("Desktop Updater: Current version is null");
-    }
-
-    if (latestVersion.shortVersion > int.parse(currentVersion!)) {
+    if (latestVersion.shortVersion > currentVersion) {
       print("New version found: ${latestVersion.version}");
 
       // calculate totalSize
