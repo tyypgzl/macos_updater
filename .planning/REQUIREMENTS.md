@@ -17,8 +17,8 @@ Requirements for v2.0.0 release. Each maps to roadmap phases.
 
 ### Core API
 
-- [ ] **API-01**: `abstract interface class UpdateSource` with `getLatestUpdateInfo()` returning typed `UpdateInfo?`
-- [ ] **API-02**: `UpdateSource.getRemoteFileHashes(String remoteBaseUrl)` returning `List<FileHash>`
+- [x] **API-01**: `abstract interface class UpdateSource` with `getLatestUpdateInfo()` returning typed `UpdateInfo?`
+- [x] **API-02**: `UpdateSource.getRemoteFileHashes(String remoteBaseUrl)` returning `List<FileHash>`
 - [ ] **API-03**: `checkForUpdate(UpdateSource source)` function that compares local vs remote version and returns delta file list
 - [ ] **API-04**: `downloadUpdate(UpdateInfo info, {onProgress callback})` function that downloads only changed files with streaming progress
 - [ ] **API-05**: `applyUpdate()` function that triggers native restart via method channel
@@ -90,8 +90,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | MODEL-04 | Phase 1 | Complete |
 | MODEL-05 | Phase 1 | Complete |
 | API-06 | Phase 1 | Complete |
-| API-01 | Phase 2 | Pending |
-| API-02 | Phase 2 | Pending |
+| API-01 | Phase 2 | Complete |
+| API-02 | Phase 2 | Complete |
 | ENG-01 | Phase 3 | Pending |
 | ENG-02 | Phase 3 | Pending |
 | ENG-03 | Phase 3 | Pending |

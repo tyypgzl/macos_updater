@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0.0
 milestone_name: milestone
 status: verifying
-stopped_at: Phase 2 context gathered
-last_updated: "2026-03-26T11:20:57.078Z"
+stopped_at: Completed 02-updatesource-contract/02-01-PLAN.md
+last_updated: "2026-03-26T11:33:50.945Z"
 last_activity: 2026-03-26
 progress:
   total_phases: 7
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  completed_phases: 2
+  total_plans: 4
+  completed_plans: 4
   percent: 0
 ---
 
@@ -21,12 +21,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-26)
 
 **Core value:** Reliable, delta-based OTA updates for macOS desktop Flutter apps — only download what changed, restart seamlessly
-**Current focus:** Phase 01 — foundation
+**Current focus:** Phase 02 — updatesource-contract
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
+Phase: 02 (updatesource-contract) — EXECUTING
+Plan: 1 of 1
 Status: Phase complete — ready for verification
 Last activity: 2026-03-26
 
@@ -55,6 +55,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P01 | 197 | 3 tasks | 6 files |
 | Phase 01-foundation P03 | 3 | 4 tasks | 5 files |
 | Phase 01-foundation P02 | 8m | 4 tasks | 4 files |
+| Phase 02-updatesource-contract P01 | 2 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,9 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Non-null assertion on invokeMethod<int> result — null CFBundleVersion is a native configuration error that should throw loudly
 - [Phase 01-foundation]: UpdateCheckResult lives in lib/src/errors/ per D-11 directory layout despite not being an error type
 - [Phase 01-foundation]: src/models/update_progress.dart exported with hide UpdateProgress to prevent ambiguous_export conflict with v1 — resolved in Phase 5
+- [Phase 02-updatesource-contract]: abstract interface class modifier used for UpdateSource (Dart 3, D-16) — enforces implement-only, not extend
+- [Phase 02-updatesource-contract]: getLatestUpdateInfo returns Future<UpdateInfo?> null for up-to-date; getRemoteFileHashes(String) returns Future<List<FileHash>>
+- [Phase 02-updatesource-contract]: ThrowingUpdateSource throws plain Exception (not UpdateError) — consumers need not use UpdateError, engine wraps all calls
 
 ### Pending Todos
 
@@ -87,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T11:20:57.074Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-updatesource-contract/02-CONTEXT.md
+Last session: 2026-03-26T11:33:50.942Z
+Stopped at: Completed 02-updatesource-contract/02-01-PLAN.md
+Resume file: None

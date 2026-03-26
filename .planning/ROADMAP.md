@@ -13,7 +13,7 @@ Refactor `desktop_updater` from a bundled-UI, hardcoded-URL update tool into a h
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Data models, sealed errors, and platform interface that everything else depends on (completed 2026-03-26)
-- [ ] **Phase 2: UpdateSource Contract** - Abstract interface class that decouples engine from backend
+- [x] **Phase 2: UpdateSource Contract** - Abstract interface class that decouples engine from backend (completed 2026-03-26)
 - [ ] **Phase 3: Core Engine** - Delta diffing, file download, and progress stream internals
 - [ ] **Phase 4: Public API** - Orchestrator wiring engine into clean function-based API
 - [ ] **Phase 5: UI Removal** - Delete all widget code and produce consumer migration guide
@@ -52,7 +52,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 02-01-PLAN.md — UpdateSource interface (API-01, API-02), barrel export, MockUpdateSource test double, error boundary contract tests
+- [x] 02-01-PLAN.md — UpdateSource interface (API-01, API-02), barrel export, MockUpdateSource test double, error boundary contract tests
 
 ### Phase 3: Core Engine
 **Goal**: Delta diffing, file downloading, and progress streaming work correctly in isolation
@@ -118,7 +118,7 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete   | 2026-03-26 |
-| 2. UpdateSource Contract | 0/1 | Not started | - |
+| 2. UpdateSource Contract | 1/1 | Complete   | 2026-03-26 |
 | 3. Core Engine | 0/TBD | Not started | - |
 | 4. Public API | 0/TBD | Not started | - |
 | 5. UI Removal | 0/TBD | Not started | - |
