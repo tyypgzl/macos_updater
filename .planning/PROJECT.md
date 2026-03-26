@@ -21,6 +21,7 @@ Reliable, delta-based OTA updates for macOS desktop Flutter apps — only downlo
 - ✓ Redesigned data models (UpdateInfo, FileHash, UpdateProgress, UpdateError, UpdateCheckResult) — Phase 1
 - ✓ getCurrentVersion() returns int buildNumber — Phase 1
 - ✓ Abstract UpdateSource interface class with getLatestUpdateInfo() and getRemoteFileHashes() — Phase 2
+- ✓ Core engine: FileHasher (in-memory Blake2b diff) and FileDownloader (streaming progress) — Phase 3
 
 ### Active
 - [ ] Remove all UI code (widgets, controller, inherited widget) — consumers own their UI
@@ -91,4 +92,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-26 after Phase 2 completion*
+*Last updated: 2026-03-26 after Phase 3 completion*
