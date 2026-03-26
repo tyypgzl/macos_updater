@@ -18,12 +18,13 @@ Reliable, delta-based OTA updates for macOS desktop Flutter apps — only downlo
 - ✓ CLI release build tool (`dart run desktop_updater:release`) — existing
 - ✓ CLI archive/hash generation tool (`dart run desktop_updater:archive`) — existing
 - ✓ Platform interface abstraction for native calls — existing
+- ✓ Redesigned data models (UpdateInfo, FileHash, UpdateProgress, UpdateError, UpdateCheckResult) — Phase 1
+- ✓ getCurrentVersion() returns int buildNumber — Phase 1
 
 ### Active
 
 - [ ] Replace JSON URL config with abstract `UpdateSource` class (async methods returning typed models)
 - [ ] Remove all UI code (widgets, controller, inherited widget) — consumers own their UI
-- [ ] Redesign data models (clean, minimal — version, hashes, downloadUrl)
 - [ ] Modernize Dart code (Flutter 3.29+/Dart 3.7+, sealed classes, enhanced enums)
 - [ ] Modernize Swift native code (async/await, modern patterns)
 - [ ] Simplify CLI tools to macOS-only
@@ -91,4 +92,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-26 after initialization*
+*Last updated: 2026-03-26 after Phase 1 completion*
