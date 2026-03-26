@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0.0
 milestone_name: milestone
-status: verifying
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-26T12:13:50.959Z"
+status: executing
+stopped_at: Completed 03-core-engine-01-PLAN.md
+last_updated: "2026-03-26T13:47:28.716Z"
 last_activity: 2026-03-26
 progress:
   total_phases: 7
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 6
+  completed_plans: 5
   percent: 0
 ---
 
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-26)
 
 **Core value:** Reliable, delta-based OTA updates for macOS desktop Flutter apps — only download what changed, restart seamlessly
-**Current focus:** Phase 02 — updatesource-contract
+**Current focus:** Phase 03 — core-engine
 
 ## Current Position
 
-Phase: 3
-Plan: Not started
-Status: Phase complete — ready for verification
+Phase: 03 (core-engine) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-03-26
 
 Progress: [░░░░░░░░░░] 0%
@@ -56,6 +56,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P03 | 3 | 4 tasks | 5 files |
 | Phase 01-foundation P02 | 8m | 4 tasks | 4 files |
 | Phase 02-updatesource-contract P01 | 2 | 2 tasks | 3 files |
+| Phase 03-core-engine P01 | 3 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,9 @@ Recent decisions affecting current work:
 - [Phase 02-updatesource-contract]: abstract interface class modifier used for UpdateSource (Dart 3, D-16) — enforces implement-only, not extend
 - [Phase 02-updatesource-contract]: getLatestUpdateInfo returns Future<UpdateInfo?> null for up-to-date; getRemoteFileHashes(String) returns Future<List<FileHash>>
 - [Phase 02-updatesource-contract]: ThrowingUpdateSource throws plain Exception (not UpdateError) — consumers need not use UpdateError, engine wraps all calls
+- [Phase 03-core-engine]: generateLocalFileHashes returns List<FileHash> directly — no temp file written to disk
+- [Phase 03-core-engine]: diffFileHashes uses Map<String, FileHash> lookup for O(n) comparison
+- [Phase 03-core-engine]: NoPlatformEntry thrown (not generic Exception) when bundle dir missing
 
 ### Pending Todos
 
@@ -91,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T12:13:50.955Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-core-engine/03-CONTEXT.md
+Last session: 2026-03-26T13:47:28.713Z
+Stopped at: Completed 03-core-engine-01-PLAN.md
+Resume file: None

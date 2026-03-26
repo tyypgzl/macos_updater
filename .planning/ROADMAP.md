@@ -66,7 +66,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — File hasher: generateLocalFileHashes() and diffFileHashes() in lib/src/engine/file_hasher.dart (ENG-01)
+- [x] 03-01-PLAN.md — File hasher: generateLocalFileHashes() and diffFileHashes() in lib/src/engine/file_hasher.dart (ENG-01)
 - [ ] 03-02-PLAN.md — File downloader and progress stream: downloadFiles() returning Stream<UpdateProgress> in lib/src/engine/file_downloader.dart (ENG-02, ENG-03)
 
 ### Phase 4: Public API
