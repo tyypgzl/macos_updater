@@ -63,7 +63,11 @@ Plans:
   2. A changed file downloads from a remote URL to a local staging path with streaming progress events emitted for each chunk received
   3. A `Stream<UpdateProgress>` emits `completedFiles`, `totalFiles`, `currentFile`, `receivedBytes`, and `totalBytes` throughout a download — a consumer can display a progress indicator from this stream alone
   4. Local file hashes for the running app bundle are computed via `generateLocalFileHashes()` without error on macOS
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — File hasher: generateLocalFileHashes() and diffFileHashes() in lib/src/engine/file_hasher.dart (ENG-01)
+- [ ] 03-02-PLAN.md — File downloader and progress stream: downloadFiles() returning Stream<UpdateProgress> in lib/src/engine/file_downloader.dart (ENG-02, ENG-03)
 
 ### Phase 4: Public API
 **Goal**: Consumers can check for updates, download them, and trigger restart using four clean functions
@@ -119,7 +123,7 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete   | 2026-03-26 |
 | 2. UpdateSource Contract | 1/1 | Complete   | 2026-03-26 |
-| 3. Core Engine | 0/TBD | Not started | - |
+| 3. Core Engine | 0/2 | Not started | - |
 | 4. Public API | 0/TBD | Not started | - |
 | 5. UI Removal | 0/TBD | Not started | - |
 | 6. Swift Native | 0/TBD | Not started | - |
