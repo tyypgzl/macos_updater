@@ -61,7 +61,7 @@ class DesktopUpdater {
     return prepareUpdateAppFunction(remoteUpdateFolder: remoteUpdateFolder);
   }
 
-  Future<String?> getCurrentVersion() {
+  Future<int> getCurrentVersion() {
     return DesktopUpdaterPlatform.instance.getCurrentVersion();
   }
 
