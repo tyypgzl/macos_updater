@@ -49,7 +49,10 @@ Plans:
   1. A consumer can implement `UpdateSource` by writing two async methods — `getLatestUpdateInfo()` and `getRemoteFileHashes(String remoteBaseUrl)` — with no other boilerplate
   2. A `MockUpdateSource` implementation exists in tests that returns controlled `UpdateInfo` and `List<FileHash>` values
   3. Any exception thrown by a consumer's `UpdateSource` implementation is caught by the engine and mapped to a typed `UpdateError` — no raw exceptions escape the boundary
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 02-01-PLAN.md — UpdateSource interface (API-01, API-02), barrel export, MockUpdateSource test double, error boundary contract tests
 
 ### Phase 3: Core Engine
 **Goal**: Delta diffing, file downloading, and progress streaming work correctly in isolation
@@ -115,7 +118,7 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete   | 2026-03-26 |
-| 2. UpdateSource Contract | 0/TBD | Not started | - |
+| 2. UpdateSource Contract | 0/1 | Not started | - |
 | 3. Core Engine | 0/TBD | Not started | - |
 | 4. Public API | 0/TBD | Not started | - |
 | 5. UI Removal | 0/TBD | Not started | - |
