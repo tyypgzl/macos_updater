@@ -1,5 +1,5 @@
-import 'package:desktop_updater/src/models/file_hash.dart';
 import 'package:flutter/foundation.dart';
+import 'package:macos_updater/src/models/file_hash.dart';
 
 /// Metadata about an available update, returned by the UpdateSource.
 ///

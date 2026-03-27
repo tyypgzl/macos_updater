@@ -1,5 +1,5 @@
-name: desktop_updater_example
-description: Demonstrates how to use the desktop_updater plugin.
+name: macos_updater_example
+description: Demonstrates how to use the macos_updater plugin.
 publish_to: none
 version: 2.0.0
 
@@ -8,7 +8,7 @@ environment:
   flutter: '>=3.29.0'
 
 dependencies:
-  desktop_updater:
+  macos_updater:
     path: ../
   flutter:
     sdk: flutter

@@ -1,4 +1,4 @@
-import "package:desktop_updater/src/errors/update_error.dart";
+import "package:macos_updater/src/errors/update_error.dart";
 import "package:flutter_test/flutter_test.dart";
 
 void main() {

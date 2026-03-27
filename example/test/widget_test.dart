@@ -1,4 +1,4 @@
-import 'package:desktop_updater_example/main.dart';
+import 'package:macos_updater_example/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,8 +1,8 @@
-name: desktop_updater
+name: macos_updater
 description: "A headless Flutter desktop OTA update engine for macOS. Downloads only changed files via Blake2b delta diffing. Bring your own backend via the abstract UpdateSource interface."
 version: 2.0.0
-homepage: https://github.com/MarlonJD/flutter_desktop_updater
-repository: https://github.com/MarlonJD/flutter_desktop_updater
+homepage: https://github.com/MarlonJD/flutter_macos_updater
+repository: https://github.com/MarlonJD/flutter_macos_updater
 
 platforms:
   macos:
@@ -50,7 +50,7 @@ flutter:
   plugin:
     platforms:
       macos:
-        pluginClass: DesktopUpdaterPlugin
+        pluginClass: MacosUpdaterPlugin
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

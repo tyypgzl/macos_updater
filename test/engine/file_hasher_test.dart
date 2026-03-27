@@ -1,8 +1,8 @@
 import "dart:io";
 
-import "package:desktop_updater/src/engine/file_hasher.dart";
-import "package:desktop_updater/src/errors/update_error.dart";
-import "package:desktop_updater/src/models/file_hash.dart";
+import "package:macos_updater/src/engine/file_hasher.dart";
+import "package:macos_updater/src/errors/update_error.dart";
+import "package:macos_updater/src/models/file_hash.dart";
 import "package:flutter_test/flutter_test.dart";
 
 void main() {

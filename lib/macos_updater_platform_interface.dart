@@ -1,27 +1,27 @@
-import 'package:desktop_updater/desktop_updater_method_channel.dart';
+import 'package:macos_updater/macos_updater_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-/// Abstract platform interface for the desktop_updater plugin.
+/// Abstract platform interface for the macos_updater plugin.
 ///
 /// Platform implementations must extend this class and register themselves
 /// as the [instance] before any API calls are made.
-abstract class DesktopUpdaterPlatform extends PlatformInterface {
-  /// Constructs a DesktopUpdaterPlatform.
-  DesktopUpdaterPlatform() : super(token: _token);
+abstract class MacosUpdaterPlatform extends PlatformInterface {
+  /// Constructs a MacosUpdaterPlatform.
+  MacosUpdaterPlatform() : super(token: _token);
 
   static final Object _token = Object();
 
-  static DesktopUpdaterPlatform _instance = MethodChannelDesktopUpdater();
+  static MacosUpdaterPlatform _instance = MethodChannelMacosUpdater();
 
-  /// The default instance of [DesktopUpdaterPlatform] to use.
+  /// The default instance of [MacosUpdaterPlatform] to use.
   ///
-  /// Defaults to [MethodChannelDesktopUpdater].
-  static DesktopUpdaterPlatform get instance => _instance;
+  /// Defaults to [MethodChannelMacosUpdater].
+  static MacosUpdaterPlatform get instance => _instance;
 
   /// Platform-specific implementations should set this with their own
-  /// platform-specific class that extends [DesktopUpdaterPlatform] when
+  /// platform-specific class that extends [MacosUpdaterPlatform] when
   /// they register themselves.
-  static set instance(DesktopUpdaterPlatform instance) {
+  static set instance(MacosUpdaterPlatform instance) {
     PlatformInterface.verifyToken(instance, _token);
     _instance = instance;
   }

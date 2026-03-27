@@ -1,6 +1,6 @@
-import 'package:desktop_updater/src/errors/update_error.dart';
-import 'package:desktop_updater/src/models/file_hash.dart';
-import 'package:desktop_updater/src/models/update_info.dart';
+import 'package:macos_updater/src/errors/update_error.dart';
+import 'package:macos_updater/src/models/file_hash.dart';
+import 'package:macos_updater/src/models/update_info.dart';
 
 /// The backend abstraction for the update engine.
 ///

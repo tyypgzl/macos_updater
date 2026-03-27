@@ -13,7 +13,7 @@ Headless Flutter plugin for macOS desktop OTA updates (v2.0.0). Downloads only c
 flutter test
 
 # Run a single test file
-flutter test test/desktop_updater_api_test.dart
+flutter test test/macos_updater_api_test.dart
 
 # Analyze (lint) — must pass with zero issues
 flutter analyze
@@ -22,10 +22,10 @@ flutter analyze
 cd example && flutter build macos
 
 # CLI: Build release artifacts (requires FLUTTER_ROOT env var)
-dart run desktop_updater:release macos
+dart run macos_updater:release macos
 
 # CLI: Generate hashes and prepare archive from dist/
-dart run desktop_updater:archive macos
+dart run macos_updater:archive macos
 ```
 
 ## Architecture
@@ -42,8 +42,8 @@ dart run desktop_updater:archive macos
 - **Errors** (`lib/src/errors/`): Sealed `UpdateError` (5 subtypes), sealed `UpdateCheckResult`
 - **Engine** (`lib/src/engine/`): `FileHasher` (Blake2b diff), `FileDownloader` (HTTP streaming + progress)
 - **Contract** (`lib/src/update_source.dart`): `abstract interface class UpdateSource` — consumer implements this
-- **Public API** (`lib/src/desktop_updater_api.dart`): `checkForUpdate()`, `downloadUpdate()`, `applyUpdate()`, `generateLocalFileHashes()`
-- **Platform** (`lib/desktop_updater_platform_interface.dart`): Method channel for `restartApp`, `getCurrentVersion` (returns int)
+- **Public API** (`lib/src/macos_updater_api.dart`): `checkForUpdate()`, `downloadUpdate()`, `applyUpdate()`, `generateLocalFileHashes()`
+- **Platform** (`lib/macos_updater_platform_interface.dart`): Method channel for `restartApp`, `getCurrentVersion` (returns int)
 - **Native** (`macos/`): Swift with Task{} bridging, sandbox detection, correct terminate sequence
 - **CLI** (`bin/`): macOS-only `release.dart` and `archive.dart`
 
@@ -59,7 +59,7 @@ dart run desktop_updater:archive macos
 - `prefer_final_locals`, `require_trailing_commas`, `omit_local_variable_types` enforced
 - `final class` for models, `sealed class` for errors/results
 - `abstract interface class` for consumer contracts
-- Package imports only (`package:desktop_updater/...`), no relative imports
+- Package imports only (`package:macos_updater/...`), no relative imports
 
 <!-- GSD:project-start source:PROJECT.md -->
 ## Project
@@ -119,9 +119,9 @@ A Flutter plugin for macOS desktop OTA updates. Downloads only changed files by 
 - Windows - Native C++ implementation
 - Linux - Native C implementation
 - Uses platform channels via `plugin_platform_interface`
-- macOS: `DesktopUpdaterPlugin` class
-- Windows: `DesktopUpdaterPluginCApi` (C API variant)
-- Linux: `DesktopUpdaterPlugin` class
+- macOS: `MacosUpdaterPlugin` class
+- Windows: `MacosUpdaterPluginCApi` (C API variant)
+- Linux: `MacosUpdaterPlugin` class
 ## Development Environment
 - Dart SDK 3.6.0+
 - Flutter 3.3.0+
@@ -130,9 +130,9 @@ A Flutter plugin for macOS desktop OTA updates. Downloads only changed files by 
 - 87 active linter rules configured in `analysis_options.yaml`
 - Strict enforcement: always declare return types, package imports, avoid dynamic calls, require API docs
 ## CLI Tools
-- `dart pub global activate desktop_updater` - Install as global CLI tool
-- `dart run desktop_updater:release [platform]` - Prepare release build
-- `dart run desktop_updater:archive [platform]` - Create distributable archive
+- `dart pub global activate macos_updater` - Install as global CLI tool
+- `dart run macos_updater:release [platform]` - Prepare release build
+- `dart run macos_updater:archive [platform]` - Create distributable archive
 - CLI scripts in `bin/` directory:
 ## Testing Configuration
 - Unit/widget tests: `example/test/` and `test/`
@@ -144,16 +144,16 @@ A Flutter plugin for macOS desktop OTA updates. Downloads only changed files by 
 ## Conventions
 
 ## Naming Patterns
-- PascalCase for public library files: `DesktopUpdater.dart`, `UpdateProgress.dart`
+- PascalCase for public library files: `MacosUpdater.dart`, `UpdateProgress.dart`
 - snake_case for private library files: `file_hash.dart`, `version_check.dart`
 - PascalCase for widgets: `UpdateDialog.dart`, `UpdateCard.dart`
-- suffixed naming for private implementations: `desktop_updater_method_channel.dart`, `desktop_updater_platform_interface.dart`
+- suffixed naming for private implementations: `macos_updater_method_channel.dart`, `macos_updater_platform_interface.dart`
 - camelCase for all function names: `updateAppFunction()`, `versionCheckFunction()`, `getFileHash()`
 - Descriptive verb-based names: `verifyFileHashes()`, `prepareUpdateAppFunction()`, `downloadFile()`
 - camelCase for local variables and parameters: `executablePath`, `directoryPath`, `receivedBytes`
 - camelCase for private fields with leading underscore: `_appName`, `_needUpdate`, `_isDownloading`
 - CONSTANT_CASE for compile-time constants (rare usage in this codebase)
-- PascalCase for classes and models: `FileHashModel`, `ItemModel`, `UpdateProgress`, `DesktopUpdaterController`
+- PascalCase for classes and models: `FileHashModel`, `ItemModel`, `UpdateProgress`, `MacosUpdaterController`
 - PascalCase for exceptions: `HttpException`
 - Suffix `Model` for data classes: `AppArchiveModel`, `ChangeModel`
 - Suffix `State` for private State classes: `_UpdateDialogListenerState`, `_UpdateCardState`
@@ -165,7 +165,7 @@ A Flutter plugin for macOS desktop OTA updates. Downloads only changed files by 
 - Enabled via `analysis_options.yaml` with 60+ strict linter rules
 - Key enforced rules:
 ## Import Organization
-- All imports use full package paths: `package:desktop_updater/...`
+- All imports use full package paths: `package:macos_updater/...`
 - Import aliasing for namespacing: `import "package:http/http.dart" as http;` and `import "package:path/path.dart" as path;`
 - No wildcard or relative imports
 ## Error Handling
@@ -199,10 +199,10 @@ A Flutter plugin for macOS desktop OTA updates. Downloads only changed files by 
 - Nullable return types with `?`: `Future<String?>`, `Future<List<FileHashModel?>>`
 - Stream return types for progress updates: `Future<Stream<UpdateProgress>>`
 ## Module Design
-- Main export file: `lib/desktop_updater.dart`
+- Main export file: `lib/macos_updater.dart`
 - Barrel pattern used: exports key classes and types
 - Example:
-- `lib/desktop_updater.dart` aggregates public API
+- `lib/macos_updater.dart` aggregates public API
 - Simplifies consumer imports: can import from main package only
 ## Class Organization
 - `const` constructors for immutable classes: `const UpdateDialogListener({...})`
@@ -235,13 +235,13 @@ A Flutter plugin for macOS desktop OTA updates. Downloads only changed files by 
 - Re-usable UI widgets for update presentation
 ## Layers
 - Purpose: Define platform-specific contracts and route calls to native implementations
-- Location: `lib/desktop_updater_platform_interface.dart`, `lib/desktop_updater_method_channel.dart`
+- Location: `lib/macos_updater_platform_interface.dart`, `lib/macos_updater_method_channel.dart`
 - Contains: Abstract platform interface and method channel implementation
 - Depends on: Flutter services, plugin_platform_interface
 - Used by: Core API layer
 - Purpose: Provide high-level public API for version checking, updating, and file operations
-- Location: `lib/desktop_updater.dart`
-- Contains: `DesktopUpdater` class wrapping all public operations
+- Location: `lib/macos_updater.dart`
+- Contains: `MacosUpdater` class wrapping all public operations
 - Depends on: Platform abstraction, business logic functions
 - Used by: Controller and application code
 - Purpose: Implement core update workflows and file operations
@@ -251,7 +251,7 @@ A Flutter plugin for macOS desktop OTA updates. Downloads only changed files by 
 - Used by: Core API layer
 - Purpose: Manage UI state and coordinate update workflow
 - Location: `lib/updater_controller.dart`
-- Contains: `DesktopUpdaterController` extending ChangeNotifier
+- Contains: `MacosUpdaterController` extending ChangeNotifier
 - Depends on: Core API, update progress models
 - Used by: UI widgets and application
 - Purpose: Present update UI components
@@ -260,10 +260,10 @@ A Flutter plugin for macOS desktop OTA updates. Downloads only changed files by 
 - Depends on: State management layer
 - Used by: Flutter applications integrating the plugin
 ## Data Flow
-- `DesktopUpdaterController` holds all update state
+- `MacosUpdaterController` holds all update state
 - State includes: version info, download progress, UI flags, release notes
 - `ChangeNotifier` pattern allows UI to listen to specific state changes
-- `InheritedWidget` pattern via `DesktopUpdaterInheritedNotifier` passes controller down tree
+- `InheritedWidget` pattern via `MacosUpdaterInheritedNotifier` passes controller down tree
 ## Key Abstractions
 - Purpose: Represent platform-specific version information and changes
 - Examples: `lib/src/app_archive.dart` defines `AppArchiveModel`, `ItemModel`, `ChangeModel`
@@ -275,10 +275,10 @@ A Flutter plugin for macOS desktop OTA updates. Downloads only changed files by 
 - Examples: `lib/src/update_progress.dart` defines `UpdateProgress`
 - Pattern: Immutable data class with byte counts and file metadata
 - Purpose: Define contract for native platform implementations
-- Examples: `lib/desktop_updater_platform_interface.dart`
+- Examples: `lib/macos_updater_platform_interface.dart`
 - Pattern: Abstract base class with platform-specific concrete implementation
 ## Entry Points
-- Location: `lib/desktop_updater.dart`
+- Location: `lib/macos_updater.dart`
 - Triggers: Direct instantiation by applications
 - Responsibilities: Expose all update operations, coordinate with platform layer
 - Location: `lib/updater_controller.dart`
@@ -294,7 +294,7 @@ A Flutter plugin for macOS desktop OTA updates. Downloads only changed files by 
 - Triggers: Command-line invocation
 - Responsibilities: Create app-archive.json metadata, compute hashes for all files
 ## Error Handling
-- `DesktopUpdater` methods throw `Exception` for null/invalid state (e.g., missing archive URL)
+- `MacosUpdater` methods throw `Exception` for null/invalid state (e.g., missing archive URL)
 - `versionCheckFunction()` validates: directory exists, files downloaded successfully, platform version found
 - `updateAppFunction()` catches download errors via `catchError()` and adds to response stream
 - `verifyFileHashes()` throws if hash files don't exist

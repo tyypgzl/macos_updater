@@ -1,14 +1,14 @@
 import 'dart:io';
 
-import 'package:desktop_updater/desktop_updater_platform_interface.dart';
-import 'package:desktop_updater/src/engine/file_downloader.dart';
-import 'package:desktop_updater/src/engine/file_hasher.dart' as hasher;
-import 'package:desktop_updater/src/errors/update_check_result.dart';
-import 'package:desktop_updater/src/errors/update_error.dart';
-import 'package:desktop_updater/src/models/file_hash.dart';
-import 'package:desktop_updater/src/models/update_info.dart';
-import 'package:desktop_updater/src/models/update_progress.dart';
-import 'package:desktop_updater/src/update_source.dart';
+import 'package:macos_updater/macos_updater_platform_interface.dart';
+import 'package:macos_updater/src/engine/file_downloader.dart';
+import 'package:macos_updater/src/engine/file_hasher.dart' as hasher;
+import 'package:macos_updater/src/errors/update_check_result.dart';
+import 'package:macos_updater/src/errors/update_error.dart';
+import 'package:macos_updater/src/models/file_hash.dart';
+import 'package:macos_updater/src/models/update_info.dart';
+import 'package:macos_updater/src/models/update_progress.dart';
+import 'package:macos_updater/src/update_source.dart';
 
 /// Checks whether an update is available by querying the given [source].
 ///
@@ -29,7 +29,7 @@ Future<UpdateCheckResult> checkForUpdate(UpdateSource source) async {
     }
 
     final localBuild =
-        await DesktopUpdaterPlatform.instance.getCurrentVersion();
+        await MacosUpdaterPlatform.instance.getCurrentVersion();
     if (remoteInfo.buildNumber <= localBuild) {
       return const UpToDate();
     }
@@ -86,7 +86,7 @@ Future<void> downloadUpdate(
 /// Throws `RestartFailed` if the platform call throws any exception.
 Future<void> applyUpdate() async {
   try {
-    await DesktopUpdaterPlatform.instance.restartApp();
+    await MacosUpdaterPlatform.instance.restartApp();
   } catch (e) {
     throw RestartFailed(
       message: 'applyUpdate failed: $e',

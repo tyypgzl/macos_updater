@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:desktop_updater/src/errors/update_error.dart';
-import 'package:desktop_updater/src/models/file_hash.dart';
-import 'package:desktop_updater/src/models/update_progress.dart';
 import 'package:http/http.dart' as http;
+import 'package:macos_updater/src/errors/update_error.dart';
+import 'package:macos_updater/src/models/file_hash.dart';
+import 'package:macos_updater/src/models/update_progress.dart';
 import 'package:path/path.dart' as path;
 
 /// Downloads a single file from [url] into [stagingPath], calling

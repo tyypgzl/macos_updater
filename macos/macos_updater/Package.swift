@@ -4,17 +4,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "desktop_updater",
+    name: "macos_updater",
     platforms: [
         .macOS("10.15")
     ],
     products: [
-        .library(name: "desktop-updater", targets: ["desktop_updater"])
+        .library(name: "macos-updater", targets: ["macos_updater"])
     ],
     dependencies: [],
     targets: [
         .target(
-            name: "desktop_updater",
+            name: "macos_updater",
             dependencies: [
             ],
             resources: [

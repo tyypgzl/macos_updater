@@ -1,12 +1,12 @@
-import "package:desktop_updater/desktop_updater_method_channel.dart";
+import "package:macos_updater/macos_updater_method_channel.dart";
 import "package:flutter/services.dart";
 import "package:flutter_test/flutter_test.dart";
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final platform = MethodChannelDesktopUpdater();
-  const channel = MethodChannel("desktop_updater");
+  final platform = MethodChannelMacosUpdater();
+  const channel = MethodChannel("macos_updater");
 
   setUp(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(

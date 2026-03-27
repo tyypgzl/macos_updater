@@ -1,10 +1,10 @@
-import "package:desktop_updater/desktop_updater_method_channel.dart";
-import "package:desktop_updater/desktop_updater_platform_interface.dart";
+import "package:macos_updater/macos_updater_method_channel.dart";
+import "package:macos_updater/macos_updater_platform_interface.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:plugin_platform_interface/plugin_platform_interface.dart";
 
-class MockDesktopUpdaterPlatform
-    extends DesktopUpdaterPlatform
+class MockMacosUpdaterPlatform
+    extends MacosUpdaterPlatform
     with MockPlatformInterfaceMixin {
   @override
   Future<String?> getPlatformVersion() => Future.value("42");
@@ -31,16 +31,16 @@ class MockDesktopUpdaterPlatform
 }
 
 void main() {
-  final initialPlatform = DesktopUpdaterPlatform.instance;
+  final initialPlatform = MacosUpdaterPlatform.instance;
 
-  test("$MethodChannelDesktopUpdater is the default instance", () {
-    expect(initialPlatform, isInstanceOf<MethodChannelDesktopUpdater>());
+  test("$MethodChannelMacosUpdater is the default instance", () {
+    expect(initialPlatform, isInstanceOf<MethodChannelMacosUpdater>());
   });
 
   test("getPlatformVersion", () async {
-    final fakePlatform = MockDesktopUpdaterPlatform();
-    DesktopUpdaterPlatform.instance = fakePlatform;
+    final fakePlatform = MockMacosUpdaterPlatform();
+    MacosUpdaterPlatform.instance = fakePlatform;
 
-    expect(await DesktopUpdaterPlatform.instance.getPlatformVersion(), "42");
+    expect(await MacosUpdaterPlatform.instance.getPlatformVersion(), "42");
   });
 }

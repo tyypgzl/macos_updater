@@ -11,7 +11,7 @@ import 'helper/copy.dart';
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
     print(
-      'Only macos is supported. Usage: dart run desktop_updater:release macos',
+      'Only macos is supported. Usage: dart run macos_updater:release macos',
     );
     exit(1);
   }
@@ -21,7 +21,7 @@ Future<void> main(List<String> args) async {
 
   if (platform != 'macos') {
     print(
-      'Only macos is supported. Usage: dart run desktop_updater:release macos',
+      'Only macos is supported. Usage: dart run macos_updater:release macos',
     );
     exit(1);
   }

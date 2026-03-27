@@ -1,12 +1,12 @@
 import "dart:io";
 
-import "package:desktop_updater/desktop_updater_platform_interface.dart";
-import "package:desktop_updater/src/desktop_updater_api.dart";
-import "package:desktop_updater/src/errors/update_check_result.dart";
-import "package:desktop_updater/src/errors/update_error.dart";
-import "package:desktop_updater/src/models/file_hash.dart";
-import "package:desktop_updater/src/models/update_info.dart";
-import "package:desktop_updater/src/update_source.dart";
+import "package:macos_updater/macos_updater_platform_interface.dart";
+import "package:macos_updater/src/macos_updater_api.dart";
+import "package:macos_updater/src/errors/update_check_result.dart";
+import "package:macos_updater/src/errors/update_error.dart";
+import "package:macos_updater/src/models/file_hash.dart";
+import "package:macos_updater/src/models/update_info.dart";
+import "package:macos_updater/src/update_source.dart";
 import "package:flutter/services.dart";
 import "package:flutter_test/flutter_test.dart";
 
@@ -42,8 +42,8 @@ class ThrowingUpdateSource implements UpdateSource {
 
 /// Mock platform that extends (not implements) the abstract
 /// class so `PlatformInterface.verifyToken` passes when assigning to
-/// `DesktopUpdaterPlatform.instance`.
-class MockDesktopUpdaterPlatform extends DesktopUpdaterPlatform {
+/// `MacosUpdaterPlatform.instance`.
+class MockMacosUpdaterPlatform extends MacosUpdaterPlatform {
   bool restartShouldThrow = false;
   int versionToReturn = 100;
 
@@ -83,11 +83,11 @@ UpdateInfo _makeUpdateInfo({
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late MockDesktopUpdaterPlatform mockPlatform;
+  late MockMacosUpdaterPlatform mockPlatform;
 
   setUp(() {
-    mockPlatform = MockDesktopUpdaterPlatform();
-    DesktopUpdaterPlatform.instance = mockPlatform;
+    mockPlatform = MockMacosUpdaterPlatform();
+    MacosUpdaterPlatform.instance = mockPlatform;
   });
 
   // -------------------------------------------------------------------------

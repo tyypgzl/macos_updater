@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:desktop_updater/desktop_updater.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:macos_updater/macos_updater.dart';
 
 // ─── UpdateSource Implementation ────────────────────
 
@@ -158,7 +158,7 @@ class _UpdateExamplePageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('desktop_updater example'),
+        title: const Text('macos_updater example'),
       ),
       body: Center(
         child: Padding(

@@ -3,10 +3,10 @@ import "dart:convert";
 import "dart:io";
 
 import "package:crypto/crypto.dart";
-import "package:desktop_updater/src/engine/file_downloader.dart";
-import "package:desktop_updater/src/errors/update_error.dart";
-import "package:desktop_updater/src/models/file_hash.dart";
-import "package:desktop_updater/src/models/update_progress.dart";
+import "package:macos_updater/src/engine/file_downloader.dart";
+import "package:macos_updater/src/errors/update_error.dart";
+import "package:macos_updater/src/models/file_hash.dart";
+import "package:macos_updater/src/models/update_progress.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:http/http.dart" as http;
 import "package:http/testing.dart";

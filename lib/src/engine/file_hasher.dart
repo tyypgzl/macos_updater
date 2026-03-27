@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:desktop_updater/src/errors/update_error.dart';
-import 'package:desktop_updater/src/models/file_hash.dart';
+import 'package:macos_updater/src/errors/update_error.dart';
+import 'package:macos_updater/src/models/file_hash.dart';
 
 /// Returns the app bundle's Contents/ directory on macOS, or the
 /// executable's parent directory on other platforms.

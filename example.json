@@ -20,7 +20,7 @@
       ],
       "date": "2025-01-10",
       "mandatory": true,
-      "url": "https://s3.eu-central-1.amazonaws.com/www.monolib.net/archive/desktop_updater/0.1.8%2B9-windows",
+      "url": "https://s3.eu-central-1.amazonaws.com/www.monolib.net/archive/macos_updater/0.1.8%2B9-windows",
       "platform": "windows"
     },
     {
@@ -41,7 +41,7 @@
       ],
       "date": "2025-01-10",
       "mandatory": true,
-      "url": "https://s3.eu-central-1.amazonaws.com/www.monolib.net/archive/desktop_updater/0.1.6%2B7-macos",
+      "url": "https://s3.eu-central-1.amazonaws.com/www.monolib.net/archive/macos_updater/0.1.6%2B7-macos",
       "platform": "macos"
     }
   ]

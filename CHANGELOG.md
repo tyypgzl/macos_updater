@@ -8,8 +8,8 @@ their own UI.
 
 | Removed | Reason |
 |---------|--------|
-| `DesktopUpdater` class | Replaced by top-level functions |
-| `DesktopUpdaterController` | Replaced by `checkForUpdate` / `downloadUpdate` functions |
+| `MacosUpdater` class | Replaced by top-level functions |
+| `MacosUpdaterController` | Replaced by `checkForUpdate` / `downloadUpdate` functions |
 | `DesktopUpdateInheritedWidget` | No longer needed (no controller) |
 | `DesktopUpdateWidget` | Consumers build their own UI |
 | `DesktopUpdateSliver` | Consumers build their own UI |
@@ -24,7 +24,7 @@ their own UI.
 
 #### Step 1 — Implement UpdateSource
 
-Before (v1): `DesktopUpdaterController` fetched the app-archive JSON for you.
+Before (v1): `MacosUpdaterController` fetched the app-archive JSON for you.
 
 After (v2): Implement `UpdateSource` to fetch version metadata from your own backend.
 
@@ -53,7 +53,7 @@ class MyUpdateSource implements UpdateSource {
 Before (v1):
 ```dart
 // v1: controller-based
-final controller = DesktopUpdaterController(
+final controller = MacosUpdaterController(
   appArchiveUrl: Uri.parse("https://example.com/app-archive.json"),
   localization: const DesktopUpdateLocalization(...),
 );
@@ -80,8 +80,8 @@ switch (result) {
 
 Before (v1):
 ```dart
-import "package:desktop_updater/updater_controller.dart";
-import "package:desktop_updater/widget/update_widget.dart";
+import "package:macos_updater/updater_controller.dart";
+import "package:macos_updater/widget/update_widget.dart";
 
 // in build():
 return DesktopUpdateWidget(
@@ -92,7 +92,7 @@ return DesktopUpdateWidget(
 
 After (v2):
 ```dart
-import "package:desktop_updater/desktop_updater.dart";
+import "package:macos_updater/macos_updater.dart";
 
 // Build your own UI — the package provides no widgets.
 // Use checkForUpdate / downloadUpdate / applyUpdate from your state management layer.
@@ -102,14 +102,14 @@ import "package:desktop_updater/desktop_updater.dart";
 
 Before (v1):
 ```dart
-import "package:desktop_updater/desktop_updater.dart";        // DesktopUpdater class
-import "package:desktop_updater/updater_controller.dart";     // DesktopUpdaterController
-import "package:desktop_updater/widget/update_widget.dart";   // DesktopUpdateWidget
+import "package:macos_updater/macos_updater.dart";        // MacosUpdater class
+import "package:macos_updater/updater_controller.dart";     // MacosUpdaterController
+import "package:macos_updater/widget/update_widget.dart";   // DesktopUpdateWidget
 ```
 
 After (v2):
 ```dart
-import "package:desktop_updater/desktop_updater.dart"; // everything in one import
+import "package:macos_updater/macos_updater.dart"; // everything in one import
 ```
 
 ## 1.3.0

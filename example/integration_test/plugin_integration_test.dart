@@ -1,4 +1,4 @@
-import 'package:desktop_updater/desktop_updater.dart';
+import 'package:macos_updater/macos_updater.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -8,7 +8,7 @@ void main() {
   testWidgets(
     'getCurrentVersion returns an int',
     (tester) async {
-      final version = await DesktopUpdaterPlatform
+      final version = await MacosUpdaterPlatform
           .instance
           .getCurrentVersion();
       expect(version, isA<int>());

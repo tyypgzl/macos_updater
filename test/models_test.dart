@@ -1,6 +1,6 @@
-import "package:desktop_updater/src/models/file_hash.dart";
-import "package:desktop_updater/src/models/update_info.dart";
-import "package:desktop_updater/src/models/update_progress.dart";
+import "package:macos_updater/src/models/file_hash.dart";
+import "package:macos_updater/src/models/update_info.dart";
+import "package:macos_updater/src/models/update_progress.dart";
 import "package:flutter_test/flutter_test.dart";
 
 void main() {

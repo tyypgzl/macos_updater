@@ -1,7 +1,7 @@
 import Cocoa
 import FlutterMacOS
 
-public class DesktopUpdaterPlugin: NSObject, FlutterPlugin {
+public class MacosUpdaterPlugin: NSObject, FlutterPlugin {
     private func getCurrentVersion() -> Int? {
         let infoDictionary = Bundle.main.infoDictionary!
         let version = infoDictionary["CFBundleVersion"] as! String
@@ -13,7 +13,7 @@ public class DesktopUpdaterPlugin: NSObject, FlutterPlugin {
         if ProcessInfo.processInfo.environment["APP_SANDBOX_CONTAINER_ID"] != nil {
             result(FlutterError(
                 code: "SANDBOX_INCOMPATIBLE",
-                message: "App Sandbox is enabled. desktop_updater requires a non-sandboxed macOS app. Remove the com.apple.security.app-sandbox entitlement.",
+                message: "App Sandbox is enabled. macos_updater requires a non-sandboxed macOS app. Remove the com.apple.security.app-sandbox entitlement.",
                 details: nil
             ))
             return
@@ -98,8 +98,8 @@ public class DesktopUpdaterPlugin: NSObject, FlutterPlugin {
     }
 
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "desktop_updater", binaryMessenger: registrar.messenger)
-        let instance = DesktopUpdaterPlugin()
+        let channel = FlutterMethodChannel(name: "macos_updater", binaryMessenger: registrar.messenger)
+        let instance = MacosUpdaterPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
 

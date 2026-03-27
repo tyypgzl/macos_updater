@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:desktop_updater/src/models/file_hash.dart';
+import 'package:macos_updater/src/models/file_hash.dart';
 
 import 'helper/copy.dart';
 
@@ -82,7 +82,7 @@ Future<String?> genFileHashes({required String? path}) async {
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
     print(
-      'Only macos is supported. Usage: dart run desktop_updater:archive macos',
+      'Only macos is supported. Usage: dart run macos_updater:archive macos',
     );
     exit(1);
   }
@@ -91,7 +91,7 @@ Future<void> main(List<String> args) async {
 
   if (platform != 'macos') {
     print(
-      'Only macos is supported. Usage: dart run desktop_updater:archive macos',
+      'Only macos is supported. Usage: dart run macos_updater:archive macos',
     );
     exit(1);
   }
@@ -122,7 +122,7 @@ Future<void> main(List<String> args) async {
   /// Check if there is a file in given platform
   for (final file in files) {
     if (file is Directory) {
-      // desktop_updater_example-0.1.1+2-macos.app
+      // macos_updater_example-0.1.1+2-macos.app
       // version is 0.1.1, build number is 2,
       // platform is macos, name is appNamePubspec variable
       final version = file.path.split('-').elementAt(1).split('+').first;

@@ -10,7 +10,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  desktop_updater: ^2.0.0
+  macos_updater: ^2.0.0
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ dependencies:
 Connect the engine to your backend by implementing two methods:
 
 ```dart
-import "package:desktop_updater/desktop_updater.dart";
+import "package:macos_updater/macos_updater.dart";
 
 class MyUpdateSource implements UpdateSource {
   @override
@@ -179,10 +179,10 @@ Build your macOS app and generate update artifacts:
 
 ```bash
 # 1. Build release and copy to dist/
-dart run desktop_updater:release macos
+dart run macos_updater:release macos
 
 # 2. Generate hashes.json for the built artifact
-dart run desktop_updater:archive macos
+dart run macos_updater:archive macos
 ```
 
 This creates a `dist/{buildNumber}/{version}+{buildNumber}-macos/` folder with your app files and a `hashes.json` manifest. Upload this folder to your server — the engine downloads individual files from it.
@@ -202,10 +202,10 @@ This creates a `dist/{buildNumber}/{version}+{buildNumber}-macos/` folder with y
 
 ## Migrating from v1
 
-v2.0.0 removes all built-in UI and the `DesktopUpdaterController`. See [CHANGELOG.md](CHANGELOG.md) for the full migration guide with before/after code examples.
+v2.0.0 removes all built-in UI and the `MacosUpdaterController`. See [CHANGELOG.md](CHANGELOG.md) for the full migration guide with before/after code examples.
 
 **Key changes:**
-- `DesktopUpdaterController` → `checkForUpdate()` + `downloadUpdate()` + `applyUpdate()`
+- `MacosUpdaterController` → `checkForUpdate()` + `downloadUpdate()` + `applyUpdate()`
 - `DesktopUpdateWidget` / `DesktopUpdateSliver` → Build your own UI using the function API
 - `appArchiveUrl` parameter → Implement `UpdateSource` interface
 - `FileHashModel` → `FileHash`
