@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0.0
 milestone_name: milestone
 status: verifying
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-26T14:26:35.264Z"
-last_activity: 2026-03-26
+stopped_at: Completed 04-public-api-01-PLAN.md
+last_updated: "2026-03-27T05:09:32.821Z"
+last_activity: 2026-03-27
 progress:
   total_phases: 7
-  completed_phases: 3
-  total_plans: 6
-  completed_plans: 6
+  completed_phases: 4
+  total_plans: 7
+  completed_plans: 7
   percent: 0
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-26)
 
 **Core value:** Reliable, delta-based OTA updates for macOS desktop Flutter apps — only download what changed, restart seamlessly
-**Current focus:** Phase 03 — core-engine
+**Current focus:** Phase 04 — public-api
 
 ## Current Position
 
-Phase: 4
-Plan: Not started
+Phase: 04 (public-api) — EXECUTING
+Plan: 1 of 1
 Status: Phase complete — ready for verification
-Last activity: 2026-03-26
+Last activity: 2026-03-27
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -58,6 +58,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-updatesource-contract P01 | 2 | 2 tasks | 3 files |
 | Phase 03-core-engine P01 | 3 | 2 tasks | 2 files |
 | Phase 03-core-engine P02 | 10m | 2 tasks | 2 files |
+| Phase 04-public-api P01 | 3m | 4 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,9 @@ Recent decisions affecting current work:
 - [Phase 03-core-engine]: NoPlatformEntry thrown (not generic Exception) when bundle dir missing
 - [Phase 03-core-engine]: Used local async downloadOne() function instead of .catchError() chain to satisfy FutureOr<Null> type constraint and unnecessary_lambdas lint simultaneously
 - [Phase 03-core-engine]: Post-download Blake2b hash verification added in _downloadSingleFile — throws HashMismatch before returning
+- [Phase 04-public-api]: hasher prefix import used in desktop_updater_api.dart to disambiguate engine generateLocalFileHashes from identically-named public wrapper
+- [Phase 04-public-api]: MockDesktopUpdaterPlatform extends DesktopUpdaterPlatform (not implements) so PlatformInterface.verifyToken passes on instance setter assignment in tests
+- [Phase 04-public-api]: checkForUpdate wraps entire body in try-catch(Object), mapping NoPlatformEntry from generateLocalFileHashes to NetworkError at the API boundary
 
 ### Pending Todos
 
@@ -98,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T14:26:35.260Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-public-api/04-CONTEXT.md
+Last session: 2026-03-27T05:09:32.818Z
+Stopped at: Completed 04-public-api-01-PLAN.md
+Resume file: None

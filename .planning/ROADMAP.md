@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - Data models, sealed errors, and platform interface that everything else depends on (completed 2026-03-26)
 - [x] **Phase 2: UpdateSource Contract** - Abstract interface class that decouples engine from backend (completed 2026-03-26)
 - [x] **Phase 3: Core Engine** - Delta diffing, file download, and progress stream internals (completed 2026-03-26)
-- [ ] **Phase 4: Public API** - Orchestrator wiring engine into clean function-based API
+- [x] **Phase 4: Public API** - Orchestrator wiring engine into clean function-based API (completed 2026-03-27)
 - [ ] **Phase 5: UI Removal** - Delete all widget code and produce consumer migration guide
 - [ ] **Phase 6: Swift Native** - Fix terminate race condition, add sandbox guard, modernize async
 - [ ] **Phase 7: CLI & Dependencies** - Simplify tools to macOS-only and bump all dependency versions
@@ -82,7 +82,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md — API orchestration layer: checkForUpdate, downloadUpdate, applyUpdate, generateLocalFileHashes functions + barrel export (API-03, API-04, API-05, API-07)
+- [x] 04-01-PLAN.md — API orchestration layer: checkForUpdate, downloadUpdate, applyUpdate, generateLocalFileHashes functions + barrel export (API-03, API-04, API-05, API-07)
 
 ### Phase 5: UI Removal
 **Goal**: All widget, controller, and localization code is deleted and consumers have a clear migration path
@@ -127,7 +127,7 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 | 1. Foundation | 3/3 | Complete   | 2026-03-26 |
 | 2. UpdateSource Contract | 1/1 | Complete   | 2026-03-26 |
 | 3. Core Engine | 2/2 | Complete   | 2026-03-26 |
-| 4. Public API | 0/1 | Not started | - |
+| 4. Public API | 1/1 | Complete   | 2026-03-27 |
 | 5. UI Removal | 0/TBD | Not started | - |
 | 6. Swift Native | 0/TBD | Not started | - |
 | 7. CLI & Dependencies | 0/TBD | Not started | - |

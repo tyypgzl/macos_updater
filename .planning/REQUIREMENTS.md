@@ -19,11 +19,11 @@ Requirements for v2.0.0 release. Each maps to roadmap phases.
 
 - [x] **API-01**: `abstract interface class UpdateSource` with `getLatestUpdateInfo()` returning typed `UpdateInfo?`
 - [x] **API-02**: `UpdateSource.getRemoteFileHashes(String remoteBaseUrl)` returning `List<FileHash>`
-- [ ] **API-03**: `checkForUpdate(UpdateSource source)` function that compares local vs remote version and returns delta file list
-- [ ] **API-04**: `downloadUpdate(UpdateInfo info, {onProgress callback})` function that downloads only changed files with streaming progress
-- [ ] **API-05**: `applyUpdate()` function that triggers native restart via method channel
+- [x] **API-03**: `checkForUpdate(UpdateSource source)` function that compares local vs remote version and returns delta file list
+- [x] **API-04**: `downloadUpdate(UpdateInfo info, {onProgress callback})` function that downloads only changed files with streaming progress
+- [x] **API-05**: `applyUpdate()` function that triggers native restart via method channel
 - [x] **API-06**: `getCurrentVersion()` function exposed on platform interface returning build number string
-- [ ] **API-07**: `generateLocalFileHashes()` function that computes Blake2b hashes for the running app bundle
+- [x] **API-07**: `generateLocalFileHashes()` function that computes Blake2b hashes for the running app bundle
 
 ### Engine
 
@@ -95,10 +95,10 @@ Deferred to future release. Tracked but not in current roadmap.
 | ENG-01 | Phase 3 | Complete |
 | ENG-02 | Phase 3 | Complete |
 | ENG-03 | Phase 3 | Complete |
-| API-03 | Phase 4 | Pending |
-| API-04 | Phase 4 | Pending |
-| API-05 | Phase 4 | Pending |
-| API-07 | Phase 4 | Pending |
+| API-03 | Phase 4 | Complete |
+| API-04 | Phase 4 | Complete |
+| API-05 | Phase 4 | Complete |
+| API-07 | Phase 4 | Complete |
 | REM-01 | Phase 5 | Pending |
 | REM-02 | Phase 5 | Pending |
 | REM-03 | Phase 5 | Pending |
