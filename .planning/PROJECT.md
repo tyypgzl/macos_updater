@@ -23,9 +23,9 @@ Reliable, delta-based OTA updates for macOS desktop Flutter apps — only downlo
 - ✓ Abstract UpdateSource interface class with getLatestUpdateInfo() and getRemoteFileHashes() — Phase 2
 - ✓ Core engine: FileHasher (in-memory Blake2b diff) and FileDownloader (streaming progress) — Phase 3
 - ✓ Public API: checkForUpdate(), downloadUpdate(), applyUpdate(), generateLocalFileHashes() — Phase 4
+- ✓ UI removed: all widgets, controller, localization deleted + CHANGELOG migration guide — Phase 5
 
 ### Active
-- [ ] Remove all UI code (widgets, controller, inherited widget) — consumers own their UI
 - [ ] Modernize Dart code (Flutter 3.29+/Dart 3.7+, sealed classes, enhanced enums)
 - [ ] Modernize Swift native code (async/await, modern patterns)
 - [ ] Simplify CLI tools to macOS-only
@@ -93,4 +93,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-27 after Phase 4 completion*
+*Last updated: 2026-03-27 after Phase 5 completion*
