@@ -33,11 +33,11 @@ Requirements for v2.0.0 release. Each maps to roadmap phases.
 
 ### Code Removal
 
-- [ ] **REM-01**: Remove all widget files (update_card.dart, update_dialog.dart, update_widget.dart, update_sliver.dart, update_direct_card.dart)
-- [ ] **REM-02**: Remove DesktopUpdaterController (updater_controller.dart)
-- [ ] **REM-03**: Remove DesktopUpdateInheritedWidget (desktop_updater_inherited_widget.dart)
-- [ ] **REM-04**: Remove DesktopUpdateLocalization (src/localization.dart)
-- [ ] **REM-05**: Clean public barrel exports to only expose engine API
+- [x] **REM-01**: Remove all widget files (update_card.dart, update_dialog.dart, update_widget.dart, update_sliver.dart, update_direct_card.dart)
+- [x] **REM-02**: Remove DesktopUpdaterController (updater_controller.dart)
+- [x] **REM-03**: Remove DesktopUpdateInheritedWidget (desktop_updater_inherited_widget.dart)
+- [x] **REM-04**: Remove DesktopUpdateLocalization (src/localization.dart)
+- [x] **REM-05**: Clean public barrel exports to only expose engine API
 
 ### Native Modernization
 
@@ -99,11 +99,11 @@ Deferred to future release. Tracked but not in current roadmap.
 | API-04 | Phase 4 | Complete |
 | API-05 | Phase 4 | Complete |
 | API-07 | Phase 4 | Complete |
-| REM-01 | Phase 5 | Pending |
-| REM-02 | Phase 5 | Pending |
-| REM-03 | Phase 5 | Pending |
-| REM-04 | Phase 5 | Pending |
-| REM-05 | Phase 5 | Pending |
+| REM-01 | Phase 5 | Complete |
+| REM-02 | Phase 5 | Complete |
+| REM-03 | Phase 5 | Complete |
+| REM-04 | Phase 5 | Complete |
+| REM-05 | Phase 5 | Complete |
 | NAT-01 | Phase 6 | Pending |
 | NAT-02 | Phase 6 | Pending |
 | NAT-03 | Phase 6 | Pending |

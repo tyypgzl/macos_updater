@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0.0
 milestone_name: milestone
-status: verifying
-stopped_at: Phase 5 context gathered
-last_updated: "2026-03-27T05:31:18.058Z"
+status: executing
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-27T06:09:25.994Z"
 last_activity: 2026-03-27
 progress:
   total_phases: 7
   completed_phases: 4
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 9
+  completed_plans: 8
   percent: 0
 ---
 
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-26)
 
 **Core value:** Reliable, delta-based OTA updates for macOS desktop Flutter apps — only download what changed, restart seamlessly
-**Current focus:** Phase 04 — public-api
+**Current focus:** Phase 05 — ui-removal
 
 ## Current Position
 
-Phase: 5
-Plan: Not started
-Status: Phase complete — ready for verification
+Phase: 05 (ui-removal) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-03-27
 
 Progress: [░░░░░░░░░░] 0%
@@ -59,6 +59,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-core-engine P01 | 3 | 2 tasks | 2 files |
 | Phase 03-core-engine P02 | 10m | 2 tasks | 2 files |
 | Phase 04-public-api P01 | 3m | 4 tasks | 3 files |
+| Phase 05-ui-removal P01 | 10m | 2 tasks | 23 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,8 @@ Recent decisions affecting current work:
 - [Phase 04-public-api]: hasher prefix import used in desktop_updater_api.dart to disambiguate engine generateLocalFileHashes from identically-named public wrapper
 - [Phase 04-public-api]: MockDesktopUpdaterPlatform extends DesktopUpdaterPlatform (not implements) so PlatformInterface.verifyToken passes on instance setter assignment in tests
 - [Phase 04-public-api]: checkForUpdate wraps entire body in try-catch(Object), mapping NoPlatformEntry from generateLocalFileHashes to NetworkError at the API boundary
+- [Phase 05-ui-removal]: Deleted DesktopUpdater class entirely — all functionality is now top-level functions in desktop_updater_api.dart
+- [Phase 05-ui-removal]: Removed v1 methods from DesktopUpdaterPlatform (verifyFileHash, prepareUpdateApp, generateFileHashes, updateApp) — v2 engine handles these directly
 
 ### Pending Todos
 
@@ -102,6 +105,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T05:31:18.053Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-ui-removal/05-CONTEXT.md
+Last session: 2026-03-27T06:09:25.991Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: None
