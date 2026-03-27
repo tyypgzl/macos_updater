@@ -83,14 +83,18 @@ Future<String?> genFileHashes({required String? path}) async {
 
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
-    print("PLATFORM must be specified: macos, windows, linux");
+    print(
+      "Only macos is supported. Usage: dart run desktop_updater:archive macos",
+    );
     exit(1);
   }
 
   final platform = args[0];
 
-  if (platform != "macos" && platform != "windows" && platform != "linux") {
-    print("PLATFORM must be specified: macos, windows, linux");
+  if (platform != "macos") {
+    print(
+      "Only macos is supported. Usage: dart run desktop_updater:archive macos",
+    );
     exit(1);
   }
 
@@ -143,42 +147,18 @@ Future<void> main(List<String> args) async {
     print("Using archive: $foundDirectory");
   }
 
-  /// Check if the file is a zip file
-  // if (!foundDirectory.endsWith(".app")) {
-  //   print("File is not a zip file");
-  //   exit(1);
-  // }
-
   // Get current build name and number from pubspec.yaml
   final pubspec = File("pubspec.yaml");
   final pubspecContent = await pubspec.readAsString();
   final appNamePubspec =
       RegExp(r"name: (.+)").firstMatch(pubspecContent)!.group(1);
 
-  if (platform == "windows") {
-    await copyDirectory(
-      Directory(
-        foundDirectory,
-      ),
-      Directory(
-        "${lastBuildNumberFolder.path}${Platform.pathSeparator}$foundVersion+$foundBuildNumber-$platform",
-      ),
-    );
-  } else if (platform == "macos") {
-    await copyDirectory(
-      Directory("$foundDirectory/$appNamePubspec.app/Contents"),
-      Directory(
-        "${lastBuildNumberFolder.path}${Platform.pathSeparator}$foundVersion+$foundBuildNumber-$platform",
-      ),
-    );
-  } else if (platform == "linux") {
-    await copyDirectory(
-      Directory(foundDirectory),
-      Directory(
-        "${lastBuildNumberFolder.path}/$foundVersion+$foundBuildNumber-$platform",
-      ),
-    );
-  }
+  await copyDirectory(
+    Directory("$foundDirectory/$appNamePubspec.app/Contents"),
+    Directory(
+      "${lastBuildNumberFolder.path}${Platform.pathSeparator}$foundVersion+$foundBuildNumber-macos",
+    ),
+  );
 
   await genFileHashes(
     path:
