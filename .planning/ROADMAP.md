@@ -109,7 +109,10 @@ Plans:
   2. Running the app inside App Sandbox causes `applyUpdate()` to return `UpdateError.noPlatformEntry` (or a sandbox-specific error) with a message explaining the incompatibility — it does not silently fail
   3. The macOS deployment target in Package.swift is `macOS("10.15")` — the plugin does not target Mojave
   4. The method channel handler uses `Task {}` bridging for async operations and dispatches file operations on a GCD background queue
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 06-01-PLAN.md — Rewrite DesktopUpdaterPlugin.swift (fix race, sandbox guard, Task{} bridging, Int version) and bump Package.swift to macOS 10.15 (NAT-01, NAT-02, NAT-03, NAT-04)
 
 ### Phase 7: CLI & Dependencies
 **Goal**: CLI tools are macOS-only and all dependencies are at latest compatible versions
@@ -133,5 +136,5 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 | 3. Core Engine | 2/2 | Complete   | 2026-03-26 |
 | 4. Public API | 1/1 | Complete   | 2026-03-27 |
 | 5. UI Removal | 1/2 | In Progress|  |
-| 6. Swift Native | 0/TBD | Not started | - |
+| 6. Swift Native | 0/1 | Not started | - |
 | 7. CLI & Dependencies | 0/TBD | Not started | - |
