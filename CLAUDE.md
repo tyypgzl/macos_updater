@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Flutter plugin for desktop OTA updates (macOS, Windows, Linux). Downloads only changed files by comparing Blake2b file hashes between local and remote versions. Uses a JSON-based app-archive manifest hosted on any static server (S3, GitHub Pages, etc.) to advertise available versions.
+Headless Flutter plugin for macOS desktop OTA updates (v2.0.0). Downloads only changed files by comparing Blake2b file hashes. No built-in UI — consumers implement `UpdateSource` to connect any backend and build their own UI using the function-based API.
 
 ## Build & Test Commands
 
@@ -13,48 +13,53 @@ Flutter plugin for desktop OTA updates (macOS, Windows, Linux). Downloads only c
 flutter test
 
 # Run a single test file
-flutter test test/desktop_updater_test.dart
+flutter test test/desktop_updater_api_test.dart
 
-# Analyze (lint)
+# Analyze (lint) — must pass with zero issues
 flutter analyze
 
 # Build the example app
-cd example && flutter build macos   # or windows, linux
+cd example && flutter build macos
 
 # CLI: Build release artifacts (requires FLUTTER_ROOT env var)
-dart run desktop_updater:release macos    # or windows, linux
+dart run desktop_updater:release macos
 
 # CLI: Generate hashes and prepare archive from dist/
-dart run desktop_updater:archive macos    # or windows, linux
+dart run desktop_updater:archive macos
 ```
 
 ## Architecture
 
 ### Update Flow
-1. `DesktopUpdaterController` calls `versionCheckFunction()` with app-archive URL
-2. Version check fetches `app-archive.json`, filters by platform, compares `shortVersion` (int) against current build number
-3. If newer version exists, downloads remote `hashes.json` and diffs against local file hashes (Blake2b via `cryptography_plus`)
-4. Only changed files are downloaded individually via `updateAppFunction()`, which streams `UpdateProgress` events
-5. After download completes, `restartApp()` invokes native platform code via method channel to restart the executable
+1. Consumer implements `UpdateSource` with `getLatestUpdateInfo()` and `getRemoteFileHashes()`
+2. `checkForUpdate(source)` calls source, compares `buildNumber` (int), diffs local vs remote Blake2b hashes
+3. Returns sealed `UpdateCheckResult`: `UpToDate` or `UpdateAvailable(info)` with changed files list
+4. `downloadUpdate(info, onProgress:)` downloads only changed files with streaming progress callback
+5. `applyUpdate()` triggers native Swift restart: copy files → relaunch → terminate (fixed race condition from v1)
 
 ### Key Layers
-- **Native platform layer** (`macos/`, `windows/`, `linux/`): Method channel handlers for `restartApp`, `getExecutablePath`, `getCurrentVersion`, `getPlatformVersion`. macOS uses Swift, Windows uses C++, Linux uses C++.
-- **Platform interface** (`lib/desktop_updater_platform_interface.dart`): Abstract platform contract. `MethodChannelDesktopUpdater` is the default implementation.
-- **Core logic** (`lib/src/`): Pure Dart - version checking, file hashing, downloading, update orchestration. No Flutter dependencies here except through the platform interface.
-- **UI widgets** (`lib/widget/`): `DesktopUpdateWidget`, `DesktopUpdateSliver`, `DesktopUpdateDirectCard`, `UpdateDialogListener` - all consume `DesktopUpdaterController` via `DesktopUpdateInheritedWidget`.
-- **CLI tools** (`bin/`): `release.dart` builds the app and copies to `dist/`, `archive.dart` generates `hashes.json` for the built artifacts.
+- **Models** (`lib/src/models/`): `UpdateInfo`, `FileHash`, `UpdateProgress` — immutable `final class` types
+- **Errors** (`lib/src/errors/`): Sealed `UpdateError` (5 subtypes), sealed `UpdateCheckResult`
+- **Engine** (`lib/src/engine/`): `FileHasher` (Blake2b diff), `FileDownloader` (HTTP streaming + progress)
+- **Contract** (`lib/src/update_source.dart`): `abstract interface class UpdateSource` — consumer implements this
+- **Public API** (`lib/src/desktop_updater_api.dart`): `checkForUpdate()`, `downloadUpdate()`, `applyUpdate()`, `generateLocalFileHashes()`
+- **Platform** (`lib/desktop_updater_platform_interface.dart`): Method channel for `restartApp`, `getCurrentVersion` (returns int)
+- **Native** (`macos/`): Swift with Task{} bridging, sandbox detection, correct terminate sequence
+- **CLI** (`bin/`): macOS-only `release.dart` and `archive.dart`
 
-### Platform-Specific Paths
-- macOS: `Platform.resolvedExecutable` parent is inside `.app/Contents/MacOS/`, so `dir.parent` is used to get the `.app/Contents` root
-- Linux: Version is read from `data/flutter_assets/version.json` instead of method channel
-- Windows: Build output at `build/windows/x64/runner/Release/`
+### macOS Path Resolution
+- `Platform.resolvedExecutable` → `.app/Contents/MacOS/Runner`
+- Engine resolves to `.app/Contents/` via `dir.parent.parent`
+- Update files staged in `.app/Contents/update/`
 
 ## Code Style
 
 - Double quotes for strings (`prefer_double_quotes` lint rule)
-- Strict analysis with extensive lint rules in `analysis_options.yaml`
+- Strict analysis with extensive lint rules in `analysis_options.yaml` — zero issues required
 - `prefer_final_locals`, `require_trailing_commas`, `omit_local_variable_types` enforced
-- Some comments in Turkish (original author's language)
+- `final class` for models, `sealed class` for errors/results
+- `abstract interface class` for consumer contracts
+- Package imports only (`package:desktop_updater/...`), no relative imports
 
 <!-- GSD:project-start source:PROJECT.md -->
 ## Project

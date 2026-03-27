@@ -1,271 +1,216 @@
-# What is Desktop Updater?
-This Flutter plugin supports desktop platforms including macOS, Windows, and Linux. It enables in-app application updates without requiring users to re-download the entire application. The plugin applies updates by restarting the application, ensuring a seamless user experience. Additionally, it provides two essential commands for preparing updates efficiently.
+# Desktop Updater
 
-# How does it work?
-This plugin is a platform-specific solution that executes native code tailored to each supported platform. Additionally, it includes a built-in update interface that can be seamlessly integrated into your application.
+A headless Flutter plugin for macOS desktop OTA updates. Downloads only changed files by comparing Blake2b file hashes — no full app re-download needed. Bring your own backend via the abstract `UpdateSource` interface (Firebase Remote Config, REST API, S3, local file, etc.).
 
-![flutter_desktop_updater](https://github.com/user-attachments/assets/b05d9a13-0f44-4213-b3bd-58e07c18226d)
+**v2.0.0** is a complete rewrite. No built-in UI — you build your own. See the [migration guide](#migrating-from-v1) if upgrading.
 
 ## Getting Started
-Add dependency to your `pubspec.yaml`:
-```
+
+Add to your `pubspec.yaml`:
+
+```yaml
 dependencies:
-  ...
-  desktop_updater: ^1.0.2
+  desktop_updater: ^2.0.0
 ```
 
-Install as CLI, 
-Run in your terminal:
-```
-dart pub global activate desktop_updater
-```
+## Usage
 
-# Usage
+### 1. Implement `UpdateSource`
 
-Add the following codes to your home page or any page you want to see the update card.
+Connect the engine to your backend by implementing two methods:
 
 ```dart
-import 'package:desktop_updater/desktop_updater.dart';
+import "package:desktop_updater/desktop_updater.dart";
 
-late DesktopUpdaterController _desktopUpdaterController;
-
-@override
-void initState() {
-    super.initState();
-    _desktopUpdaterController = DesktopUpdaterController(
-        appArchiveUrl: Uri.parse(
-        "https://www.yoursite.com/app-archive.json",
-        ),
+class MyUpdateSource implements UpdateSource {
+  @override
+  Future<UpdateInfo?> getLatestUpdateInfo() async {
+    // Fetch version metadata from your server.
+    // Return null if the app is already up-to-date.
+    // Return UpdateInfo if a newer version exists.
+    final response = await http.get(
+      Uri.parse("https://your-server.com/app-archive.json"),
     );
-}
-```
+    if (response.statusCode != 200) return null;
 
-Then wrap your home page with `DesktopUpdater` widget, under the Scaffold widget.
-
-```dart
-@override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Your App Home Page"),
-      ),
-      body: DesktopUpdateWidget(
-        controller: _desktopUpdaterController,
-        child: Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                    const Text(
-                        'Hello World!',
-                    ),
-                ],
-            ),
-        ),
-      ),
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return UpdateInfo(
+      version: json["version"] as String,       // display only
+      buildNumber: json["buildNumber"] as int,   // used for comparison
+      remoteBaseUrl: json["url"] as String,      // where update files are hosted
+      changedFiles: const [],                    // engine populates this
     );
-}
-```
+  }
 
-there is also sliver for custom scroll view, you can use `DesktopUpdateSliver` widget.
-
-```dart
-@override
-Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-        title: const Text("Your App Home Page"),
-        ),
-        body: CustomScrollView(
-            slivers: <Widget>[
-                DesktopUpdateSliver(
-                    controller: _desktopUpdaterController,
-                ),
-                SliverList(
-                    delegate: SliverChildListDelegate(
-                    [
-                        const Text(
-                        'Hello World!',
-                        ),
-                    ],
-                ),
-            ],
-        ),
+  @override
+  Future<List<FileHash>> getRemoteFileHashes(String remoteBaseUrl) async {
+    // Fetch hashes.json from your update server.
+    final response = await http.get(
+      Uri.parse("$remoteBaseUrl/hashes.json"),
     );
+    final list = jsonDecode(response.body) as List<dynamic>;
+    return list
+        .map((e) => FileHash.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
 }
 ```
 
-You can use this directly as a card for custom purposes. While you cannot modify the scaffold background in `DesktopUpdateSliver` or `DesktopUpdateWidget`, you can adjust colors and use it anywhere as needed
+### 2. Check for Updates
+
 ```dart
-@override
-Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.blue,
-        appBar: AppBar(
-        title: const Text("Plugin example app"),
-        ),
-        body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Center(
-            child: Column(
-                children: [
-                    Theme(
-                        data: ThemeData(
-                            colorScheme:
-                                ColorScheme.fromSeed(seedColor: Colors.blue).copyWith(
-                            onSurface: Theme.of(context).colorScheme.onSurface,
-                            onSurfaceVariant:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                            primary: Theme.of(context).colorScheme.primary,
-                            surfaceContainerLowest:
-                                Theme.of(context).colorScheme.surfaceContainerLowest,
-                            surfaceContainerLow:
-                                Theme.of(context).colorScheme.surfaceContainerLow,
-                            surfaceContainerHighest:
-                                Theme.of(context).colorScheme.surfaceContainerHighest,
-                            ),
-                        ),
-                        child: DesktopUpdateDirectCard(
-                            controller: _desktopUpdaterController,
-                            child: const Text("This is a child widget"),
-                        ),
-                    ),
-                    const Text(
-                    "Running on: 1.0.0+1",
-                    ),
-                    Text("Running on: $_platformVersion\n"),
-                ],
-            ),
-        ),
-        ),
+final source = MyUpdateSource();
+final result = await checkForUpdate(source);
+
+switch (result) {
+  case UpToDate():
+    print("App is up to date!");
+  case UpdateAvailable(:final info):
+    print("Update available: ${info.version}");
+    print("${info.changedFiles.length} files to download");
+}
+```
+
+### 3. Download Update
+
+```dart
+// Only changed files are downloaded (delta update)
+await downloadUpdate(
+  info,
+  onProgress: (progress) {
+    print("${progress.completedFiles}/${progress.totalFiles} files");
+    print("${progress.receivedBytes}/${progress.totalBytes} bytes");
+  },
+);
+```
+
+### 4. Apply Update (Restart)
+
+```dart
+try {
+  await applyUpdate();
+} on RestartFailed catch (e) {
+  print("Restart failed: ${e.message}");
+}
+```
+
+## Firebase Remote Config Example
+
+```dart
+class FirebaseUpdateSource implements UpdateSource {
+  @override
+  Future<UpdateInfo?> getLatestUpdateInfo() async {
+    final config = FirebaseRemoteConfig.instance;
+    await config.fetchAndActivate();
+
+    final build = config.getInt("latest_build_number");
+    if (build == 0) return null;
+
+    return UpdateInfo(
+      version: config.getString("latest_version"),
+      buildNumber: build,
+      remoteBaseUrl: config.getString("update_base_url"),
+      changedFiles: const [],
     );
-}
-```
+  }
 
-You can use as alert dialog a with `UpdateDialogListener`:
-```dart
-@override
-Widget build(BuildContext context) {
-    return Scaffold(
-    appBar: AppBar(
-        title: const Text("Plugin example app"),
-    ),
-    body: Column(
-        children: [
-            /// This widget not rendering
-            UpdateDialogListener(
-                controller: _desktopUpdaterController,
-            ),
-        ],
-    )
-```
-
-# Creating app-archive.json
-```
-{
-    "appName": "Desktop Updater",
-    "description": "This is my app description",
-    "items": [
-        {
-            "version": "0.1.8",
-            "shortVersion": 9,
-            "changes": [
-                {
-                    "type": "chore",
-                    "message": "Fix bug #1"
-                },
-                {
-                    "type": "feat",
-                    "message": "Add new feature #1"
-                },
-                {
-                    "message": "Add new feature #2"
-                }
-            ],
-            "date": "2025-01-10",
-            "mandatory": true,
-            "url": "https://www.yourwebsite.com/archive/desktop_updater/0.1.8%2B9-windows",
-            "platform": "windows"
-        },
-        {
-            "version": "0.1.7",
-            "shortVersion": 8,
-            "changes": [
-                {
-                    "type": "chore",
-                    "message": "Fix bug #1"
-                },
-                {
-                    "type": "feat",
-                    "message": "Add new feature #1"
-                },
-                {
-                    "message": "Add new feature #2"
-                }
-            ],
-            "date": "2025-01-10",
-            "mandatory": true,
-            "url": ""https://www.yourwebsite.com/archive/desktop_updater/0.1.6%2B7-macos",
-            "platform": "macos"
-        }
-    ]
-}
-```
-
-# How to use it?
-The steps are as follows:
-
-- Prepare an app-archive file.
-- Add a JSON file specifying the new version.
-- Build the application using the CLI and generate the output.
-- Upload the output directory, ensuring all its contents are accessible.
-
-# Commands
-You need to update version on `pubspec.yaml` file and run the following commands to build the application:
-
-`dart run desktop_updater:release macos`
-
-then it will create a folder named dist, then run the following command:
-
-`dart run desktop_updater:archive macos`
-
-You'll see `1.0.0+1-macos` folder in dist/1 folder. You can upload this folder to your server directly as a folder, you'll have to access the folder directly. You can use s3 or your own server to host the files, you can also use github pages to host the files, but this should be public access.
-
-# App Archive JSON Structure
-You should add your versions to the `items` array. Each version should have the following fields:
-- `version`: Required, The version number of the app.
-- `shortVersion`: Required, The short version number of the app. This is used to compare the versions.
-- `changes`: Required, The changes made in this version. This is an array of objects with the following fields:
-    - `type`: Optional, the type of the change. This can be one of the following values: feat, fix, chore, docs, style, refactor, perf, test, build, ci, or other.
-    - `message`: Required, The message describing the change.
-- `date`: Required, The date when this version was released.
-- `mandatory`: Required, A boolean value indicating whether this version is mandatory. If this is true, the user will not be able to skip this version.
-- `url`: Required, The URL where the app can be downloaded. This should be a direct link of the folder containing the app files.
-- `platform`: Required, The platform for which this version is available. This can be one of the following values: windows, macos, or linux.
-
-# Customization
-
-You can change text and button text by passing `DesktopUpdateLocalization` to controller.
-
-```dart
-@override
-void initState() {
-    super.initState();
-    _desktopUpdaterController = DesktopUpdaterController(
-        appArchiveUrl: Uri.parse(
-        "https://www.yoursite.com/app-archive.json",
-        ),
-        localization: const DesktopUpdateLocalization(
-            updateAvailableText: "Update available",
-            newVersionAvailableText: "{} {} is available",
-            newVersionLongText:
-                "New version is ready to download, click the button below to start downloading. This will download {} MB of data.",
-            restartText: "Restart to update",
-            warningTitleText: "Are you sure?",
-            restartWarningText:
-                "A restart is required to complete the update installation.\nAny unsaved changes will be lost. Would you like to restart now?",
-            warningCancelText: "Not now",
-            warningConfirmText: "Restart",
-        ),
+  @override
+  Future<List<FileHash>> getRemoteFileHashes(String remoteBaseUrl) async {
+    final response = await http.get(
+      Uri.parse("$remoteBaseUrl/hashes.json"),
     );
+    final list = jsonDecode(response.body) as List<dynamic>;
+    return list
+        .map((e) => FileHash.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
 }
 ```
+
+## Error Handling
+
+All errors are typed via the sealed `UpdateError` hierarchy. Use exhaustive switch — the compiler enforces all cases:
+
+```dart
+try {
+  final result = await checkForUpdate(source);
+  // ...
+} on UpdateError catch (e) {
+  switch (e) {
+    case NetworkError(:final message):
+      print("Network error: $message");
+    case HashMismatch(:final filePath):
+      print("Hash mismatch for: $filePath");
+    case NoPlatformEntry(:final message):
+      print("Platform error: $message");
+    case IncompatibleVersion(:final message):
+      print("Version error: $message");
+    case RestartFailed(:final message):
+      print("Restart failed: $message");
+  }
+}
+```
+
+## API Reference
+
+### Functions
+
+| Function | Description |
+|----------|-------------|
+| `checkForUpdate(UpdateSource source)` | Returns `UpToDate` or `UpdateAvailable(info)` |
+| `downloadUpdate(UpdateInfo info, {onProgress})` | Downloads only changed files with progress callback |
+| `applyUpdate()` | Restarts the app to apply the downloaded update |
+| `generateLocalFileHashes({String? path})` | Computes Blake2b hashes for the running app bundle |
+
+### Types
+
+| Type | Description |
+|------|-------------|
+| `UpdateSource` | Abstract interface — implement to connect your backend |
+| `UpdateInfo` | Version metadata: version, buildNumber, remoteBaseUrl, changedFiles |
+| `FileHash` | File path + Blake2b hash + file length |
+| `UpdateProgress` | Download progress: totalBytes, receivedBytes, currentFile, totalFiles, completedFiles |
+| `UpdateCheckResult` | Sealed: `UpToDate` or `UpdateAvailable(info)` |
+| `UpdateError` | Sealed: `NetworkError`, `HashMismatch`, `NoPlatformEntry`, `IncompatibleVersion`, `RestartFailed` |
+
+## CLI Commands
+
+Build your macOS app and generate update artifacts:
+
+```bash
+# 1. Build release and copy to dist/
+dart run desktop_updater:release macos
+
+# 2. Generate hashes.json for the built artifact
+dart run desktop_updater:archive macos
+```
+
+This creates a `dist/{buildNumber}/{version}+{buildNumber}-macos/` folder with your app files and a `hashes.json` manifest. Upload this folder to your server — the engine downloads individual files from it.
+
+## How Delta Updates Work
+
+1. **Build time:** CLI generates `hashes.json` with Blake2b hashes for every file in your `.app` bundle
+2. **Runtime:** Engine computes local file hashes and compares against remote `hashes.json`
+3. **Download:** Only files with different hashes are downloaded (delta update)
+4. **Apply:** Native Swift code copies updated files into the app bundle and restarts
+
+## Requirements
+
+- Flutter 3.29+ / Dart 3.7+
+- macOS 10.15+ (deployment target)
+- App must NOT be sandboxed (App Sandbox blocks bundle writes)
+
+## Migrating from v1
+
+v2.0.0 removes all built-in UI and the `DesktopUpdaterController`. See [CHANGELOG.md](CHANGELOG.md) for the full migration guide with before/after code examples.
+
+**Key changes:**
+- `DesktopUpdaterController` → `checkForUpdate()` + `downloadUpdate()` + `applyUpdate()`
+- `DesktopUpdateWidget` / `DesktopUpdateSliver` → Build your own UI using the function API
+- `appArchiveUrl` parameter → Implement `UpdateSource` interface
+- `FileHashModel` → `FileHash`
+- `ItemModel` / `AppArchiveModel` → `UpdateInfo`
+
+## License
+
+See [LICENSE](LICENSE) for details.
