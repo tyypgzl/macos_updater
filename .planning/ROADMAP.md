@@ -123,6 +123,11 @@ Plans:
   2. `dart run desktop_updater:archive macos` generates the archive and hash file for macOS — Windows/Linux code paths are removed from `archive.dart`
   3. `pubspec.yaml` SDK constraint is `sdk: ">=3.7.0 <4.0.0"` and `flutter: ">=3.29.0"` — the package requires Dart 3.7+
   4. `cryptography_plus` is at `^3.0.0`, `http`, `archive`, `flutter_lints`, and `plugin_platform_interface` are at their latest compatible versions, and any unused dependencies are removed
+**Plans**: 2 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Simplify bin/release.dart and bin/archive.dart to macOS-only, remove Windows/Linux code paths (CLI-01, CLI-02)
+- [ ] 07-02-PLAN.md — Update pubspec.yaml: version 2.0.0, SDK >=3.7.0, dep bumps, remove args (CLI-03, CLI-04, CLI-05, CLI-06)
 
 ## Progress
 
@@ -137,4 +142,4 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 | 4. Public API | 1/1 | Complete   | 2026-03-27 |
 | 5. UI Removal | 1/2 | In Progress|  |
 | 6. Swift Native | 1/1 | Complete   | 2026-03-27 |
-| 7. CLI & Dependencies | 0/TBD | Not started | - |
+| 7. CLI & Dependencies | 0/2 | Not started | - |
