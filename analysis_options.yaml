@@ -38,7 +38,6 @@ linter:
     noop_primitive_operations: true                         # To prevent redundancy.
     omit_local_variable_types: true                         # To encourage conciseness and improve code readability.
     only_throw_errors: true                                 # To ensure downstream exception handling always works.
-    package_api_docs: true                                  # To ensure public APIs have proper context and explanation.
     prefer_asserts_in_initializer_lists: true               # To improve code readability.
     prefer_asserts_with_message: true                       # To provide context to developers and users.
     prefer_const_constructors: true                         # To allow for compile-time optimizations.
