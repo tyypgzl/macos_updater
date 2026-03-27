@@ -4,17 +4,23 @@ import "dart:io";
 import "package:path/path.dart" as path;
 import "package:pubspec_parse/pubspec_parse.dart";
 
+import "helper/copy.dart";
+
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
-    print("PLATFORM must be specified: macos, windows, linux");
+    print(
+      "Only macos is supported. Usage: dart run desktop_updater:release macos",
+    );
     exit(1);
   }
 
   final platform = args[0];
   final extraArgs = args.length > 1 ? args.sublist(1) : [];
 
-  if (platform != "macos" && platform != "windows" && platform != "linux") {
-    print("PLATFORM must be specified: macos, windows, linux");
+  if (platform != "macos") {
+    print(
+      "Only macos is supported. Usage: dart run desktop_updater:release macos",
+    );
     exit(1);
   }
 
@@ -43,11 +49,7 @@ Future<void> main(List<String> args) async {
   // Print current working directory
   print("Current working directory: ${Directory.current.path}");
 
-  // Determine the Flutter executable based on the platform
-  var flutterExecutable = "flutter";
-  if (Platform.isWindows) {
-    flutterExecutable += ".bat";
-  }
+  const flutterExecutable = "flutter";
 
   final flutterBinPath = path.join(flutterPath, "bin", flutterExecutable);
 
@@ -86,53 +88,28 @@ Future<void> main(List<String> args) async {
 
   print("Build completed successfully");
 
-  late Directory buildDir;
-
-  // Determine the build directory based on the platform
-  if (platform == "windows") {
-    buildDir = Directory(
-      path.join("build", "windows", "x64", "runner", "Release"),
-    );
-  } else if (platform == "macos") {
-    buildDir = Directory(
-      path.join(
-        "build",
-        "macos",
-        "Build",
-        "Products",
-        "Release",
-        "$appNamePubspec.app",
-      ),
-    );
-  } else if (platform == "linux") {
-    buildDir = Directory(
-      path.join("build", "linux", "x64", "release", "bundle"),
-    );
-  }
+  final buildDir = Directory(
+    path.join(
+      "build",
+      "macos",
+      "Build",
+      "Products",
+      "Release",
+      "$appNamePubspec.app",
+    ),
+  );
 
   if (!buildDir.existsSync()) {
     print("Build directory not found: ${buildDir.path}");
     exit(1);
   }
 
-  final distPath = platform == "windows"
-      ? path.join(
-          "dist",
-          buildNumber,
-          "$appNamePubspec-$buildName+$buildNumber-$platform",
-        )
-      : platform == "macos"
-          ? path.join(
-              "dist",
-              buildNumber,
-              "$appNamePubspec-$buildName+$buildNumber-$platform",
-              "$appNamePubspec.app",
-            )
-          : path.join(
-              "dist",
-              buildNumber,
-              "$appNamePubspec-$buildName+$buildNumber-$platform",
-            );
+  final distPath = path.join(
+    "dist",
+    buildNumber,
+    "$appNamePubspec-$buildName+$buildNumber-macos",
+    "$appNamePubspec.app",
+  );
 
   final distDir = Directory(distPath);
   if (distDir.existsSync()) {
@@ -143,20 +120,4 @@ Future<void> main(List<String> args) async {
   await copyDirectory(buildDir, Directory(distPath));
 
   print("Archive created at $distPath");
-}
-
-// Helper function to copy directories recursively
-Future<void> copyDirectory(Directory source, Directory destination) async {
-  if (!destination.existsSync()) {
-    destination.createSync(recursive: true);
-  }
-
-  await for (final entity in source.list(recursive: true)) {
-    if (entity is File) {
-      final relativePath = path.relative(entity.path, from: source.path);
-      final newPath = path.join(destination.path, relativePath);
-      await Directory(path.dirname(newPath)).create(recursive: true);
-      await entity.copy(newPath);
-    }
-  }
 }
