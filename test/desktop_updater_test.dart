@@ -1,12 +1,11 @@
-import "package:desktop_updater/desktop_updater.dart";
 import "package:desktop_updater/desktop_updater_method_channel.dart";
 import "package:desktop_updater/desktop_updater_platform_interface.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:plugin_platform_interface/plugin_platform_interface.dart";
 
 class MockDesktopUpdaterPlatform
-    with MockPlatformInterfaceMixin
-    implements DesktopUpdaterPlatform {
+    extends DesktopUpdaterPlatform
+    with MockPlatformInterfaceMixin {
   @override
   Future<String?> getPlatformVersion() => Future.value("42");
 
@@ -26,32 +25,8 @@ class MockDesktopUpdaterPlatform
   }
 
   @override
-  Future<void> generateFileHashes({String? path}) {
-    return Future.value();
-  }
-
-  @override
-  Future<List<FileHashModel?>> verifyFileHash(
-    String oldHashFilePath,
-    String newHashFilePath,
-  ) {
-    return Future.value([]);
-  }
-
-  @override
-  Future<void> updateApp({required String remoteUpdateFolder}) {
-    return Future.value();
-  }
-
-  @override
   Future<int> getCurrentVersion() {
     return Future.value(42);
-  }
-
-  @override
-  Future<List<FileHashModel?>> prepareUpdateApp(
-      {required String remoteUpdateFolder}) {
-    return Future.value([]);
   }
 }
 
@@ -63,10 +38,9 @@ void main() {
   });
 
   test("getPlatformVersion", () async {
-    final desktopUpdaterPlugin = DesktopUpdater();
     final fakePlatform = MockDesktopUpdaterPlatform();
     DesktopUpdaterPlatform.instance = fakePlatform;
 
-    expect(await desktopUpdaterPlugin.getPlatformVersion(), "42");
+    expect(await DesktopUpdaterPlatform.instance.getPlatformVersion(), "42");
   });
 }

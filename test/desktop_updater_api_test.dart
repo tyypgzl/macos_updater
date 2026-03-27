@@ -6,7 +6,6 @@ import "package:desktop_updater/src/errors/update_check_result.dart";
 import "package:desktop_updater/src/errors/update_error.dart";
 import "package:desktop_updater/src/models/file_hash.dart";
 import "package:desktop_updater/src/models/update_info.dart";
-import "package:desktop_updater/src/models/update_progress.dart";
 import "package:desktop_updater/src/update_source.dart";
 import "package:flutter/services.dart";
 import "package:flutter_test/flutter_test.dart";

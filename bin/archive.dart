@@ -2,7 +2,7 @@ import "dart:convert";
 import "dart:io";
 
 import "package:cryptography_plus/cryptography_plus.dart";
-import "package:desktop_updater/src/app_archive.dart";
+import "package:desktop_updater/src/models/file_hash.dart";
 
 import "helper/copy.dart";
 
@@ -44,7 +44,7 @@ Future<String?> genFileHashes({required String? path}) async {
     final sink = outputFile.openWrite();
 
     // ignore: prefer_final_locals
-    var hashList = <FileHashModel>[];
+    var hashList = <FileHash>[];
 
     // Dizin içindeki tüm dosyaları döngüyle okuyoruz
     await for (final entity in dir.list(recursive: true, followLinks: false)) {
@@ -57,9 +57,9 @@ Future<String?> genFileHashes({required String? path}) async {
 
         // Dosya yolunu ve hash değerini yaz
         if (hash.isNotEmpty) {
-          final hashObj = FileHashModel(
+          final hashObj = FileHash(
             filePath: foundPath,
-            calculatedHash: hash,
+            hash: hash,
             length: entity.lengthSync(),
           );
           hashList.add(hashObj);
