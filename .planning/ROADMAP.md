@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Public API** - Orchestrator wiring engine into clean function-based API (completed 2026-03-27)
 - [ ] **Phase 5: UI Removal** - Delete all widget code and produce consumer migration guide
 - [x] **Phase 6: Swift Native** - Fix terminate race condition, add sandbox guard, modernize async (completed 2026-03-27)
-- [ ] **Phase 7: CLI & Dependencies** - Simplify tools to macOS-only and bump all dependency versions
+- [x] **Phase 7: CLI & Dependencies** - Simplify tools to macOS-only and bump all dependency versions (completed 2026-03-27)
 
 ## Phase Details
 
@@ -126,8 +126,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Simplify bin/release.dart and bin/archive.dart to macOS-only, remove Windows/Linux code paths (CLI-01, CLI-02)
-- [ ] 07-02-PLAN.md — Update pubspec.yaml: version 2.0.0, SDK >=3.7.0, dep bumps, remove args (CLI-03, CLI-04, CLI-05, CLI-06)
+- [x] 07-01-PLAN.md — Simplify bin/release.dart and bin/archive.dart to macOS-only, remove Windows/Linux code paths (CLI-01, CLI-02)
+- [x] 07-02-PLAN.md — Update pubspec.yaml: version 2.0.0, SDK >=3.7.0, dep bumps, remove args (CLI-03, CLI-04, CLI-05, CLI-06)
 
 ## Progress
 
@@ -142,4 +142,4 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 | 4. Public API | 1/1 | Complete   | 2026-03-27 |
 | 5. UI Removal | 1/2 | In Progress|  |
 | 6. Swift Native | 1/1 | Complete   | 2026-03-27 |
-| 7. CLI & Dependencies | 0/2 | Not started | - |
+| 7. CLI & Dependencies | 2/2 | Complete   | 2026-03-27 |

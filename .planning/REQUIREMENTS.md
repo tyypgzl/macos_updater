@@ -50,10 +50,10 @@ Requirements for v2.0.0 release. Each maps to roadmap phases.
 
 - [ ] **CLI-01**: Simplify release.dart to macOS-only (remove Windows/Linux build paths)
 - [ ] **CLI-02**: Simplify archive.dart to macOS-only (remove Windows/Linux archive paths)
-- [ ] **CLI-03**: Update SDK constraint to Dart ^3.7.0 / Flutter >=3.29.0
-- [ ] **CLI-04**: Update cryptography_plus to 3.x (verify Blake2b API compatibility)
-- [ ] **CLI-05**: Update http, archive, flutter_lints, plugin_platform_interface to latest versions
-- [ ] **CLI-06**: Remove unused dependencies (args if not needed after CLI simplification)
+- [x] **CLI-03**: Update SDK constraint to Dart ^3.7.0 / Flutter >=3.29.0
+- [x] **CLI-04**: Update cryptography_plus to 3.x (verify Blake2b API compatibility)
+- [x] **CLI-05**: Update http, archive, flutter_lints, plugin_platform_interface to latest versions
+- [x] **CLI-06**: Remove unused dependencies (args if not needed after CLI simplification)
 
 ## v2 Requirements
 
@@ -110,10 +110,10 @@ Deferred to future release. Tracked but not in current roadmap.
 | NAT-04 | Phase 6 | Complete |
 | CLI-01 | Phase 7 | Pending |
 | CLI-02 | Phase 7 | Pending |
-| CLI-03 | Phase 7 | Pending |
-| CLI-04 | Phase 7 | Pending |
-| CLI-05 | Phase 7 | Pending |
-| CLI-06 | Phase 7 | Pending |
+| CLI-03 | Phase 7 | Complete |
+| CLI-04 | Phase 7 | Complete |
+| CLI-05 | Phase 7 | Complete |
+| CLI-06 | Phase 7 | Complete |
 
 **Coverage:**
 - v1 requirements: 30 total
