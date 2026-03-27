@@ -16,6 +16,7 @@ export "package:desktop_updater/src/models/update_info.dart";
 // ignore: unused_shown_name
 export "package:desktop_updater/src/models/update_progress.dart" hide UpdateProgress;
 export "package:desktop_updater/src/update_progress.dart";
+export "package:desktop_updater/src/desktop_updater_api.dart";
 export "package:desktop_updater/src/update_source.dart";
 export "package:desktop_updater/widget/update_dialog.dart";
 export "package:desktop_updater/widget/update_direct_card.dart";
