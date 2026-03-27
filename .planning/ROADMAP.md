@@ -79,7 +79,10 @@ Plans:
   3. A consumer calls `applyUpdate()` and the app restarts on macOS — the function throws `UpdateError.restartFailed` on failure rather than an untyped exception
   4. `generateLocalFileHashes()` is callable from the public API and returns the bundle's file hashes as `List<FileHash>`
   5. The public barrel `desktop_updater.dart` exports exactly the engine API symbols — no widget or controller classes appear in the export
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 04-01-PLAN.md — API orchestration layer: checkForUpdate, downloadUpdate, applyUpdate, generateLocalFileHashes functions + barrel export (API-03, API-04, API-05, API-07)
 
 ### Phase 5: UI Removal
 **Goal**: All widget, controller, and localization code is deleted and consumers have a clear migration path
@@ -124,7 +127,7 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 | 1. Foundation | 3/3 | Complete   | 2026-03-26 |
 | 2. UpdateSource Contract | 1/1 | Complete   | 2026-03-26 |
 | 3. Core Engine | 2/2 | Complete   | 2026-03-26 |
-| 4. Public API | 0/TBD | Not started | - |
+| 4. Public API | 0/1 | Not started | - |
 | 5. UI Removal | 0/TBD | Not started | - |
 | 6. Swift Native | 0/TBD | Not started | - |
 | 7. CLI & Dependencies | 0/TBD | Not started | - |
