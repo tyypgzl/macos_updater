@@ -94,7 +94,11 @@ Plans:
   3. `DesktopUpdateLocalization` is gone — the package has no localizable strings
   4. The public barrel exports only engine API symbols — importing the package produces no widget-related identifiers
   5. CHANGELOG contains a migration section that shows a consumer exactly what to replace for each removed symbol, referencing the new function-based API
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Delete all v1/widget files, rewrite barrel to v2-only exports, update example app (REM-01, REM-02, REM-03, REM-04, REM-05)
+- [ ] 05-02-PLAN.md — Write CHANGELOG v2.0.0 migration section with before/after examples for each removed symbol (REM-05)
 
 ### Phase 6: Swift Native
 **Goal**: The macOS restart sequence is reliable and the sandbox incompatibility is surfaced clearly
@@ -128,6 +132,6 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 | 2. UpdateSource Contract | 1/1 | Complete   | 2026-03-26 |
 | 3. Core Engine | 2/2 | Complete   | 2026-03-26 |
 | 4. Public API | 1/1 | Complete   | 2026-03-27 |
-| 5. UI Removal | 0/TBD | Not started | - |
+| 5. UI Removal | 0/2 | Not started | - |
 | 6. Swift Native | 0/TBD | Not started | - |
 | 7. CLI & Dependencies | 0/TBD | Not started | - |
