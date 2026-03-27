@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Core Engine** - Delta diffing, file download, and progress stream internals (completed 2026-03-26)
 - [x] **Phase 4: Public API** - Orchestrator wiring engine into clean function-based API (completed 2026-03-27)
 - [ ] **Phase 5: UI Removal** - Delete all widget code and produce consumer migration guide
-- [ ] **Phase 6: Swift Native** - Fix terminate race condition, add sandbox guard, modernize async
+- [x] **Phase 6: Swift Native** - Fix terminate race condition, add sandbox guard, modernize async (completed 2026-03-27)
 - [ ] **Phase 7: CLI & Dependencies** - Simplify tools to macOS-only and bump all dependency versions
 
 ## Phase Details
@@ -112,7 +112,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 06-01-PLAN.md — Rewrite DesktopUpdaterPlugin.swift (fix race, sandbox guard, Task{} bridging, Int version) and bump Package.swift to macOS 10.15 (NAT-01, NAT-02, NAT-03, NAT-04)
+- [x] 06-01-PLAN.md — Rewrite DesktopUpdaterPlugin.swift (fix race, sandbox guard, Task{} bridging, Int version) and bump Package.swift to macOS 10.15 (NAT-01, NAT-02, NAT-03, NAT-04)
 
 ### Phase 7: CLI & Dependencies
 **Goal**: CLI tools are macOS-only and all dependencies are at latest compatible versions
@@ -136,5 +136,5 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 | 3. Core Engine | 2/2 | Complete   | 2026-03-26 |
 | 4. Public API | 1/1 | Complete   | 2026-03-27 |
 | 5. UI Removal | 1/2 | In Progress|  |
-| 6. Swift Native | 0/1 | Not started | - |
+| 6. Swift Native | 1/1 | Complete   | 2026-03-27 |
 | 7. CLI & Dependencies | 0/TBD | Not started | - |

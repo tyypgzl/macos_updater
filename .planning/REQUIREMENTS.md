@@ -41,10 +41,10 @@ Requirements for v2.0.0 release. Each maps to roadmap phases.
 
 ### Native Modernization
 
-- [ ] **NAT-01**: Modernize Swift method channel with async/await via Task {} bridging
-- [ ] **NAT-02**: Fix terminate() race condition — file operations and relaunch must happen before terminate
-- [ ] **NAT-03**: Bump macOS deployment target from 10.14 to 10.15
-- [ ] **NAT-04**: Add App Sandbox detection guard with clear error when sandboxed
+- [x] **NAT-01**: Modernize Swift method channel with async/await via Task {} bridging
+- [x] **NAT-02**: Fix terminate() race condition — file operations and relaunch must happen before terminate
+- [x] **NAT-03**: Bump macOS deployment target from 10.14 to 10.15
+- [x] **NAT-04**: Add App Sandbox detection guard with clear error when sandboxed
 
 ### CLI & Dependencies
 
@@ -104,10 +104,10 @@ Deferred to future release. Tracked but not in current roadmap.
 | REM-03 | Phase 5 | Complete |
 | REM-04 | Phase 5 | Complete |
 | REM-05 | Phase 5 | Complete |
-| NAT-01 | Phase 6 | Pending |
-| NAT-02 | Phase 6 | Pending |
-| NAT-03 | Phase 6 | Pending |
-| NAT-04 | Phase 6 | Pending |
+| NAT-01 | Phase 6 | Complete |
+| NAT-02 | Phase 6 | Complete |
+| NAT-03 | Phase 6 | Complete |
+| NAT-04 | Phase 6 | Complete |
 | CLI-01 | Phase 7 | Pending |
 | CLI-02 | Phase 7 | Pending |
 | CLI-03 | Phase 7 | Pending |

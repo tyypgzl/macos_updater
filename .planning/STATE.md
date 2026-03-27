@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0.0
 milestone_name: milestone
 status: verifying
-stopped_at: Phase 6 context gathered
-last_updated: "2026-03-27T06:21:45.673Z"
+stopped_at: Completed 06-swift-native-01-PLAN.md
+last_updated: "2026-03-27T06:30:15.857Z"
 last_activity: 2026-03-27
 progress:
   total_phases: 7
-  completed_phases: 5
-  total_plans: 9
-  completed_plans: 9
+  completed_phases: 6
+  total_plans: 10
+  completed_plans: 10
   percent: 0
 ---
 
@@ -21,12 +21,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-26)
 
 **Core value:** Reliable, delta-based OTA updates for macOS desktop Flutter apps — only download what changed, restart seamlessly
-**Current focus:** Phase 05 — ui-removal
+**Current focus:** Phase 06 — swift-native
 
 ## Current Position
 
-Phase: 6
-Plan: Not started
+Phase: 06 (swift-native) — EXECUTING
+Plan: 1 of 1
 Status: Phase complete — ready for verification
 Last activity: 2026-03-27
 
@@ -61,6 +61,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 04-public-api P01 | 3m | 4 tasks | 3 files |
 | Phase 05-ui-removal P01 | 10m | 2 tasks | 23 files |
 | Phase 05-ui-removal P02 | 1m | 1 tasks | 1 files |
+| Phase 06-swift-native P01 | 3 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,9 @@ Recent decisions affecting current work:
 - [Phase 05-ui-removal]: Deleted DesktopUpdater class entirely — all functionality is now top-level functions in desktop_updater_api.dart
 - [Phase 05-ui-removal]: Removed v1 methods from DesktopUpdaterPlatform (verifyFileHash, prepareUpdateApp, generateFileHashes, updateApp) — v2 engine handles these directly
 - [Phase 05-ui-removal]: CHANGELOG.md is the primary v2.0.0 migration document — consumers can migrate without reading source code
+- [Phase 06-swift-native]: terminate(nil) called last after copyAndReplaceFiles() and process.run() succeed — fixes race condition that caused unreliable restarts
+- [Phase 06-swift-native]: Task{} bridging used in handle(_:result:) for restartApp even though method is synchronous — prevents blocking main thread per STACK.md
+- [Phase 06-swift-native]: APP_SANDBOX_CONTAINER_ID environment check as sandbox guard — returns FlutterError(SANDBOX_INCOMPATIBLE) instead of silent failure
 
 ### Pending Todos
 
@@ -107,6 +111,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T06:21:45.669Z
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-swift-native/06-CONTEXT.md
+Last session: 2026-03-27T06:30:15.854Z
+Stopped at: Completed 06-swift-native-01-PLAN.md
+Resume file: None
