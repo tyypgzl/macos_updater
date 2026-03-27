@@ -48,8 +48,8 @@ Requirements for v2.0.0 release. Each maps to roadmap phases.
 
 ### CLI & Dependencies
 
-- [ ] **CLI-01**: Simplify release.dart to macOS-only (remove Windows/Linux build paths)
-- [ ] **CLI-02**: Simplify archive.dart to macOS-only (remove Windows/Linux archive paths)
+- [x] **CLI-01**: Simplify release.dart to macOS-only (remove Windows/Linux build paths)
+- [x] **CLI-02**: Simplify archive.dart to macOS-only (remove Windows/Linux archive paths)
 - [x] **CLI-03**: Update SDK constraint to Dart ^3.7.0 / Flutter >=3.29.0
 - [x] **CLI-04**: Update cryptography_plus to 3.x (verify Blake2b API compatibility)
 - [x] **CLI-05**: Update http, archive, flutter_lints, plugin_platform_interface to latest versions
@@ -108,8 +108,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | NAT-02 | Phase 6 | Complete |
 | NAT-03 | Phase 6 | Complete |
 | NAT-04 | Phase 6 | Complete |
-| CLI-01 | Phase 7 | Pending |
-| CLI-02 | Phase 7 | Pending |
+| CLI-01 | Phase 7 | Complete |
+| CLI-02 | Phase 7 | Complete |
 | CLI-03 | Phase 7 | Complete |
 | CLI-04 | Phase 7 | Complete |
 | CLI-05 | Phase 7 | Complete |

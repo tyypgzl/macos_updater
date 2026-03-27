@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-03-27T07:33:36.366Z"
+stopped_at: Completed 07-01-PLAN.md
+last_updated: "2026-03-27T07:33:47.386Z"
 last_activity: 2026-03-27
 progress:
   total_phases: 7
@@ -63,6 +63,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 05-ui-removal P02 | 1m | 1 tasks | 1 files |
 | Phase 06-swift-native P01 | 3 | 2 tasks | 2 files |
 | Phase 07-cli-dependencies P02 | 98s | 2 tasks | 1 files |
+| Phase 07-cli-dependencies P01 | 2m | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,8 @@ Recent decisions affecting current work:
 - [Phase 06-swift-native]: APP_SANDBOX_CONTAINER_ID environment check as sandbox guard — returns FlutterError(SANDBOX_INCOMPATIBLE) instead of silent failure
 - [Phase 07-cli-dependencies]: Used flutter pub get instead of dart pub get — Flutter SDK dependency required for plugin packages
 - [Phase 07-cli-dependencies]: cryptography_plus 3.0.0 and cryptography_flutter_plus 3.0.0 confirmed compatible — Blake2b API unchanged
+- [Phase 07-cli-dependencies]: macOS-only platform validation: single 'if (platform \!= macos)' guard replaces three-way check in both CLIs
+- [Phase 07-cli-dependencies]: copyDirectory imported from helper/copy.dart in release.dart — no inline redefinition, removes 48-line duplication
 
 ### Pending Todos
 
@@ -114,6 +117,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T07:33:24.868Z
-Stopped at: Completed 07-02-PLAN.md
+Last session: 2026-03-27T07:33:47.383Z
+Stopped at: Completed 07-01-PLAN.md
 Resume file: None
