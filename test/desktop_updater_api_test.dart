@@ -40,9 +40,9 @@ class ThrowingUpdateSource implements UpdateSource {
       Future.error(Exception("hash fetch failed"));
 }
 
-/// Mock [DesktopUpdaterPlatform] that extends (not implements) the abstract
-/// class so [PlatformInterface.verifyToken] passes when assigning to
-/// [DesktopUpdaterPlatform.instance].
+/// Mock platform that extends (not implements) the abstract
+/// class so `PlatformInterface.verifyToken` passes when assigning to
+/// `DesktopUpdaterPlatform.instance`.
 class MockDesktopUpdaterPlatform extends DesktopUpdaterPlatform {
   bool restartShouldThrow = false;
   int versionToReturn = 100;
@@ -223,7 +223,7 @@ void main() {
       () async {
         mockPlatform.restartShouldThrow = true;
         expect(
-          () => applyUpdate(),
+          applyUpdate,
           throwsA(
             isA<RestartFailed>().having(
               (e) => e.cause,

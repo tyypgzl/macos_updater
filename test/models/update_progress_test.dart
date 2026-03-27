@@ -4,8 +4,8 @@ import "package:flutter_test/flutter_test.dart";
 void main() {
   group("UpdateProgress", () {
     const baseProgress = UpdateProgress(
-      totalBytes: 1024.0,
-      receivedBytes: 512.0,
+      totalBytes: 1024,
+      receivedBytes: 512,
       currentFile: "Contents/MacOS/MyApp",
       totalFiles: 10,
       completedFiles: 5,
@@ -29,8 +29,8 @@ void main() {
     });
 
     test("copyWith overrides only totalBytes", () {
-      final copied = baseProgress.copyWith(totalBytes: 2048.0);
-      expect(copied.totalBytes, equals(2048.0));
+      final copied = baseProgress.copyWith(totalBytes: 2048);
+      expect(copied.totalBytes, equals(2048));
       expect(copied.receivedBytes, equals(baseProgress.receivedBytes));
       expect(copied.currentFile, equals(baseProgress.currentFile));
       expect(copied.totalFiles, equals(baseProgress.totalFiles));
@@ -38,9 +38,9 @@ void main() {
     });
 
     test("copyWith overrides only receivedBytes", () {
-      final copied = baseProgress.copyWith(receivedBytes: 256.0);
+      final copied = baseProgress.copyWith(receivedBytes: 256);
       expect(copied.totalBytes, equals(baseProgress.totalBytes));
-      expect(copied.receivedBytes, equals(256.0));
+      expect(copied.receivedBytes, equals(256));
     });
 
     test("copyWith overrides only completedFiles", () {
@@ -51,8 +51,8 @@ void main() {
 
     test("constructor is const - allows compile-time constants", () {
       const progress = UpdateProgress(
-        totalBytes: 0.0,
-        receivedBytes: 0.0,
+        totalBytes: 0,
+        receivedBytes: 0,
         currentFile: "",
         totalFiles: 0,
         completedFiles: 0,

@@ -50,8 +50,8 @@ void main() {
     test("exhaustive switch compiles without default arm", () {
       // This test validates the sealed class is exhaustive.
       // If the switch is not exhaustive, Dart will fail to compile.
-      UpdateError error = const NetworkError(message: "net");
-      final String result = switch (error) {
+      const UpdateError error = NetworkError(message: "net");
+      final result = switch (error) {
         NetworkError(:final message) => "network: $message",
         HashMismatch(:final filePath) => "hash: $filePath",
         NoPlatformEntry(:final message) => "no platform: $message",
@@ -66,7 +66,7 @@ void main() {
         message: "bad hash",
         filePath: "/path/to/file",
       );
-      final String result = switch (error) {
+      final result = switch (error) {
         NetworkError() => "network",
         HashMismatch(:final filePath) => "hash: $filePath",
         NoPlatformEntry() => "no platform",

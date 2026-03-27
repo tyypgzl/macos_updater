@@ -42,7 +42,7 @@ void main() {
     });
 
     test("fromJson reads correct JSON keys", () {
-      final fh = FileHash.fromJson({
+      final fh = FileHash.fromJson(const {
         "path": "Contents/MacOS/Runner",
         "calculatedHash": "sha256abc",
         "length": 512,
@@ -98,8 +98,8 @@ void main() {
   group("UpdateProgress", () {
     test("copyWith with no arguments returns equal instance", () {
       const original = UpdateProgress(
-        totalBytes: 1000.0,
-        receivedBytes: 500.0,
+        totalBytes: 1000,
+        receivedBytes: 500,
         currentFile: "libflutter.dylib",
         totalFiles: 3,
         completedFiles: 1,
@@ -114,15 +114,15 @@ void main() {
 
     test("copyWith overrides only specified field", () {
       const original = UpdateProgress(
-        totalBytes: 1000.0,
-        receivedBytes: 500.0,
+        totalBytes: 1000,
+        receivedBytes: 500,
         currentFile: "libflutter.dylib",
         totalFiles: 3,
         completedFiles: 1,
       );
-      final copy = original.copyWith(completedFiles: 2, receivedBytes: 750.0);
-      expect(copy.totalBytes, 1000.0);
-      expect(copy.receivedBytes, 750.0);
+      final copy = original.copyWith(completedFiles: 2, receivedBytes: 750);
+      expect(copy.totalBytes, 1000);
+      expect(copy.receivedBytes, 750);
       expect(copy.currentFile, "libflutter.dylib");
       expect(copy.totalFiles, 3);
       expect(copy.completedFiles, 2);

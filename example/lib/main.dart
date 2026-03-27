@@ -5,7 +5,9 @@ void main() {
   runApp(const MyApp());
 }
 
+/// Example app demonstrating the desktop_updater plugin.
 class MyApp extends StatefulWidget {
+  /// Creates the example app.
   const MyApp({super.key});
 
   @override

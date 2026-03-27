@@ -1,7 +1,7 @@
 /// Public API barrel for the desktop_updater package.
 ///
-/// Exports the v2 engine API functions ([checkForUpdate], [downloadUpdate],
-/// [applyUpdate], [generateLocalFileHashes]) and all supporting types.
+/// Exports the v2 engine API functions (`checkForUpdate`, `downloadUpdate`,
+/// `applyUpdate`, `generateLocalFileHashes`) and all supporting types.
 ///
 /// Consumers import this file only — no other package imports needed.
 library;

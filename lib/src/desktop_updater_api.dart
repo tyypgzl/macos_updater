@@ -10,17 +10,17 @@ import "package:desktop_updater/src/models/update_info.dart";
 import "package:desktop_updater/src/models/update_progress.dart";
 import "package:desktop_updater/src/update_source.dart";
 
-/// Checks whether an update is available by querying [source].
+/// Checks whether an update is available by querying the given [source].
 ///
-/// Returns [UpToDate] when [source.getLatestUpdateInfo] returns `null`
+/// Returns `UpToDate` when the source returns `null`
 /// or the remote build number is not greater than the installed build.
 ///
-/// Returns [UpdateAvailable] with a populated [UpdateInfo.changedFiles]
+/// Returns `UpdateAvailable` with a populated `UpdateInfo.changedFiles`
 /// list (diff of local vs remote Blake2b hashes) when the remote build
 /// number exceeds the locally installed build number.
 ///
-/// Any exception thrown by [source] is caught and wrapped in a
-/// [NetworkError] — no raw exception escapes this function.
+/// Any exception thrown by the source is caught and wrapped in a
+/// `NetworkError` — no raw exception escapes this function.
 Future<UpdateCheckResult> checkForUpdate(UpdateSource source) async {
   try {
     final remoteInfo = await source.getLatestUpdateInfo();
@@ -50,14 +50,14 @@ Future<UpdateCheckResult> checkForUpdate(UpdateSource source) async {
 /// Downloads the changed files described in [info] from the remote server.
 ///
 /// Streams download progress events to [onProgress] as each chunk arrives.
-/// When [info.changedFiles] is empty, the future completes immediately
+/// When the `changedFiles` list in [info] is empty, the future completes immediately
 /// without invoking [onProgress].
 ///
 /// Files are staged in the app's update directory, which is resolved
 /// relative to `Platform.resolvedExecutable`. On macOS this is
 /// `MyApp.app/Contents/update/`.
 ///
-/// Stream errors (e.g. [NetworkError], [HashMismatch]) are re-thrown as
+/// Stream errors (e.g. `NetworkError`, `HashMismatch`) are re-thrown as
 /// exceptions so the caller can handle them uniformly via try/catch.
 Future<void> downloadUpdate(
   UpdateInfo info, {
@@ -78,10 +78,10 @@ Future<void> downloadUpdate(
 
 /// Restarts the app to apply the downloaded update.
 ///
-/// Delegates to [DesktopUpdaterPlatform.instance.restartApp], which
+/// Delegates to the platform interface's `restartApp`, which
 /// invokes the native platform restart sequence.
 ///
-/// Throws [RestartFailed] if the platform call throws any exception.
+/// Throws `RestartFailed` if the platform call throws any exception.
 Future<void> applyUpdate() async {
   try {
     await DesktopUpdaterPlatform.instance.restartApp();
