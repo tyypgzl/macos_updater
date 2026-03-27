@@ -6,8 +6,6 @@ repository: https://github.com/MarlonJD/flutter_desktop_updater
 
 platforms:
   macos:
-  windows:
-  linux:
 
 topics:
   - updater
@@ -52,12 +50,8 @@ flutter:
   # adding or updating assets for this project.
   plugin:
     platforms:
-      linux:
-        pluginClass: DesktopUpdaterPlugin
       macos:
         pluginClass: DesktopUpdaterPlugin
-      windows:
-        pluginClass: DesktopUpdaterPluginCApi
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
