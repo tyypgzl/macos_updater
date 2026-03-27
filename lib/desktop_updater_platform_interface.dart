@@ -1,5 +1,5 @@
-import "package:desktop_updater/desktop_updater_method_channel.dart";
-import "package:plugin_platform_interface/plugin_platform_interface.dart";
+import 'package:desktop_updater/desktop_updater_method_channel.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 /// Abstract platform interface for the desktop_updater plugin.
 ///
@@ -28,26 +28,26 @@ abstract class DesktopUpdaterPlatform extends PlatformInterface {
 
   /// Returns the platform version string (e.g. "macOS 14.0").
   Future<String?> getPlatformVersion() {
-    throw UnimplementedError("platformVersion() has not been implemented.");
+    throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
   /// Restarts the application to apply a downloaded update.
   Future<void> restartApp() {
-    throw UnimplementedError("restartApp() has not been implemented.");
+    throw UnimplementedError('restartApp() has not been implemented.');
   }
 
   /// Returns a hello string from the native layer (for testing).
   Future<String?> sayHello() {
-    throw UnimplementedError("sayHello() has not been implemented.");
+    throw UnimplementedError('sayHello() has not been implemented.');
   }
 
   /// Returns the resolved executable path.
   Future<String?> getExecutablePath() {
-    throw UnimplementedError("getExecutablePath() has not been implemented.");
+    throw UnimplementedError('getExecutablePath() has not been implemented.');
   }
 
   /// Returns the current app build number (CFBundleVersion on macOS).
   Future<int> getCurrentVersion() {
-    throw UnimplementedError("getCurrentVersion() has not been implemented.");
+    throw UnimplementedError('getCurrentVersion() has not been implemented.');
   }
 }

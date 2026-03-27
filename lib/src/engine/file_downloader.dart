@@ -1,13 +1,13 @@
-import "dart:async";
-import "dart:convert";
-import "dart:io";
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
-import "package:cryptography_plus/cryptography_plus.dart";
-import "package:desktop_updater/src/errors/update_error.dart";
-import "package:desktop_updater/src/models/file_hash.dart";
-import "package:desktop_updater/src/models/update_progress.dart";
-import "package:http/http.dart" as http;
-import "package:path/path.dart" as path;
+import 'package:cryptography_plus/cryptography_plus.dart';
+import 'package:desktop_updater/src/errors/update_error.dart';
+import 'package:desktop_updater/src/models/file_hash.dart';
+import 'package:desktop_updater/src/models/update_progress.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 
 /// Downloads a single file from [url] into [stagingPath], calling
 /// [onChunk] with the number of bytes received in each chunk.
@@ -23,13 +23,13 @@ Future<void> _downloadSingleFile(
   void Function(int chunkBytes) onChunk,
   String expectedHash,
 ) async {
-  final request = http.Request("GET", Uri.parse(url));
+  final request = http.Request('GET', Uri.parse(url));
   final response = await client.send(request);
 
   if (response.statusCode != 200) {
     throw NetworkError(
       message:
-          "Failed to download file: $url (HTTP ${response.statusCode})",
+          'Failed to download file: $url (HTTP ${response.statusCode})',
     );
   }
 
@@ -42,7 +42,7 @@ Future<void> _downloadSingleFile(
   try {
     await response.stream
         .listen(
-          (final List<int> chunk) {
+          (List<int> chunk) {
             sink.add(chunk);
             onChunk(chunk.length);
           },
@@ -61,7 +61,8 @@ Future<void> _downloadSingleFile(
   if (actualHash != expectedHash) {
     throw HashMismatch(
       message:
-          "Hash mismatch for $stagingPath: expected $expectedHash, got $actualHash",
+          'Hash mismatch for $stagingPath: '
+          'expected $expectedHash, got $actualHash',
       filePath: stagingPath,
     );
   }
@@ -105,8 +106,8 @@ Stream<UpdateProgress> downloadFiles({
     try {
       await _downloadSingleFile(
         resolvedClient,
-        "$remoteBaseUrl/${file.filePath}",
-        path.join(appDir, "update", file.filePath),
+        '$remoteBaseUrl/${file.filePath}',
+        path.join(appDir, 'update', file.filePath),
         (chunkBytes) {
           receivedBytes += chunkBytes;
           controller.add(

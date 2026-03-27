@@ -1,14 +1,14 @@
-import "dart:io";
+import 'dart:io';
 
-import "package:desktop_updater/desktop_updater_platform_interface.dart";
-import "package:desktop_updater/src/engine/file_downloader.dart";
-import "package:desktop_updater/src/engine/file_hasher.dart" as hasher;
-import "package:desktop_updater/src/errors/update_check_result.dart";
-import "package:desktop_updater/src/errors/update_error.dart";
-import "package:desktop_updater/src/models/file_hash.dart";
-import "package:desktop_updater/src/models/update_info.dart";
-import "package:desktop_updater/src/models/update_progress.dart";
-import "package:desktop_updater/src/update_source.dart";
+import 'package:desktop_updater/desktop_updater_platform_interface.dart';
+import 'package:desktop_updater/src/engine/file_downloader.dart';
+import 'package:desktop_updater/src/engine/file_hasher.dart' as hasher;
+import 'package:desktop_updater/src/errors/update_check_result.dart';
+import 'package:desktop_updater/src/errors/update_error.dart';
+import 'package:desktop_updater/src/models/file_hash.dart';
+import 'package:desktop_updater/src/models/update_info.dart';
+import 'package:desktop_updater/src/models/update_progress.dart';
+import 'package:desktop_updater/src/update_source.dart';
 
 /// Checks whether an update is available by querying the given [source].
 ///
@@ -28,7 +28,8 @@ Future<UpdateCheckResult> checkForUpdate(UpdateSource source) async {
       return const UpToDate();
     }
 
-    final localBuild = await DesktopUpdaterPlatform.instance.getCurrentVersion();
+    final localBuild =
+        await DesktopUpdaterPlatform.instance.getCurrentVersion();
     if (remoteInfo.buildNumber <= localBuild) {
       return const UpToDate();
     }
@@ -41,7 +42,7 @@ Future<UpdateCheckResult> checkForUpdate(UpdateSource source) async {
     return UpdateAvailable(remoteInfo.copyWith(changedFiles: changedFiles));
   } catch (e) {
     throw NetworkError(
-      message: "checkForUpdate failed: $e",
+      message: 'checkForUpdate failed: $e',
       cause: e,
     );
   }
@@ -50,7 +51,8 @@ Future<UpdateCheckResult> checkForUpdate(UpdateSource source) async {
 /// Downloads the changed files described in [info] from the remote server.
 ///
 /// Streams download progress events to [onProgress] as each chunk arrives.
-/// When the `changedFiles` list in [info] is empty, the future completes immediately
+/// When the `changedFiles` list in [info] is empty, the future
+/// completes immediately
 /// without invoking [onProgress].
 ///
 /// Files are staged in the app's update directory, which is resolved
@@ -87,7 +89,7 @@ Future<void> applyUpdate() async {
     await DesktopUpdaterPlatform.instance.restartApp();
   } catch (e) {
     throw RestartFailed(
-      message: "applyUpdate failed: $e",
+      message: 'applyUpdate failed: $e',
       cause: e,
     );
   }

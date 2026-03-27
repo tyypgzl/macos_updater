@@ -1,9 +1,9 @@
-import "dart:convert";
-import "dart:io";
+import 'dart:convert';
+import 'dart:io';
 
-import "package:cryptography_plus/cryptography_plus.dart";
-import "package:desktop_updater/src/errors/update_error.dart";
-import "package:desktop_updater/src/models/file_hash.dart";
+import 'package:cryptography_plus/cryptography_plus.dart';
+import 'package:desktop_updater/src/errors/update_error.dart';
+import 'package:desktop_updater/src/models/file_hash.dart';
 
 /// Returns the app bundle's Contents/ directory on macOS, or the
 /// executable's parent directory on other platforms.
@@ -39,9 +39,9 @@ Directory _resolveAppContentsDir([String? overridePath]) {
 Future<List<FileHash>> generateLocalFileHashes({String? path}) async {
   final dir = _resolveAppContentsDir(path);
 
-  if (!await dir.exists()) {
+  if (!dir.existsSync()) {
     throw NoPlatformEntry(
-      message: "Desktop Updater: Bundle directory does not exist: ${dir.path}",
+      message: 'Desktop Updater: Bundle directory does not exist: ${dir.path}',
     );
   }
 

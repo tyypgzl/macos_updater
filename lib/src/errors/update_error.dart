@@ -11,11 +11,13 @@
 /// }
 /// ```
 ///
-/// This set is CLOSED — adding a 6th subtype is a breaking change (major version).
-/// [NoPlatformEntry] covers App Sandbox incompatibility as well as missing
-/// platform channel implementations.
+/// This set is CLOSED — adding a 6th subtype is a breaking
+/// change (major version). [NoPlatformEntry] covers App Sandbox
+/// incompatibility as well as missing platform channel
+/// implementations.
 sealed class UpdateError implements Exception {
-  /// Creates an [UpdateError] with a required [message] and an optional [cause].
+  /// Creates an [UpdateError] with a required [message]
+  /// and an optional [cause].
   const UpdateError({required this.message, this.cause});
 
   /// Human-readable description of the failure.

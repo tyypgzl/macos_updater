@@ -1,5 +1,5 @@
-import "package:desktop_updater/src/models/file_hash.dart";
-import "package:flutter/foundation.dart";
+import 'package:desktop_updater/src/models/file_hash.dart';
+import 'package:flutter/foundation.dart';
 
 /// Metadata about an available update, returned by the UpdateSource.
 ///
@@ -23,7 +23,8 @@ final class UpdateInfo {
   final String version;
 
   /// Integer build number used for version comparison.
-  /// A remote [buildNumber] greater than the local value means an update exists.
+  /// A remote [buildNumber] greater than the local value
+  /// means an update exists.
   final int buildNumber;
 
   /// Base URL where update files are hosted. Used by the engine to

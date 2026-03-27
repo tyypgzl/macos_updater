@@ -1,77 +1,80 @@
 // ignore_for_file: avoid_print
 
-import "dart:convert";
-import "dart:io";
+import 'dart:convert';
+import 'dart:io';
 
-import "package:path/path.dart" as path;
-import "package:pubspec_parse/pubspec_parse.dart";
+import 'package:path/path.dart' as path;
+import 'package:pubspec_parse/pubspec_parse.dart';
 
-import "helper/copy.dart";
+import 'helper/copy.dart';
 
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
     print(
-      "Only macos is supported. Usage: dart run desktop_updater:release macos",
+      'Only macos is supported. Usage: dart run desktop_updater:release macos',
     );
     exit(1);
   }
 
   final platform = args[0];
-  final extraArgs = args.length > 1 ? args.sublist(1) : [];
+  final extraArgs = args.length > 1 ? args.sublist(1) : <String>[];
 
-  if (platform != "macos") {
+  if (platform != 'macos') {
     print(
-      "Only macos is supported. Usage: dart run desktop_updater:release macos",
+      'Only macos is supported. Usage: dart run desktop_updater:release macos',
     );
     exit(1);
   }
 
-  final pubspec = File("pubspec.yaml").readAsStringSync();
+  final pubspec = File('pubspec.yaml').readAsStringSync();
   final parsed = Pubspec.parse(pubspec);
 
   /// Only base version 1.0.0
-  final buildName =
-      "${parsed.version?.major}.${parsed.version?.minor}.${parsed.version?.patch}";
-  final buildNumber = parsed.version?.build.firstOrNull.toString();
+  final v = parsed.version;
+  final buildName = '${v?.major}.${v?.minor}.${v?.patch}';
+  final buildNumber = v?.build.firstOrNull.toString();
 
   print(
-    "Building version $buildName+$buildNumber for $platform for app ${parsed.name}",
+    'Building version $buildName+$buildNumber '
+    'for $platform for app ${parsed.name}',
   );
 
   final appNamePubspec = parsed.name;
 
   // Get flutter path
-  final flutterPath = Platform.environment["FLUTTER_ROOT"];
+  final flutterPath = Platform.environment['FLUTTER_ROOT'];
 
   if (flutterPath == null || flutterPath.isEmpty) {
-    print("FLUTTER_ROOT environment variable is not set");
+    print('FLUTTER_ROOT environment variable is not set');
     exit(1);
   }
 
   // Print current working directory
-  print("Current working directory: ${Directory.current.path}");
+  print('Current working directory: ${Directory.current.path}');
 
-  const flutterExecutable = "flutter";
+  const flutterExecutable = 'flutter';
 
-  final flutterBinPath = path.join(flutterPath, "bin", flutterExecutable);
+  final flutterBinPath = path.join(flutterPath, 'bin', flutterExecutable);
 
   if (!File(flutterBinPath).existsSync()) {
-    print("Flutter executable not found at path: $flutterBinPath");
+    print('Flutter executable not found at path: $flutterBinPath');
     exit(1);
   }
 
   final buildCommand = <String>[
     flutterBinPath,
-    "build",
+    'build',
     platform,
-    "--dart-define",
-    "FLUTTER_BUILD_NAME=$buildName",
-    "--dart-define",
-    "FLUTTER_BUILD_NUMBER=$buildNumber",
+    '--dart-define',
+    'FLUTTER_BUILD_NAME=$buildName',
+    '--dart-define',
+    'FLUTTER_BUILD_NUMBER=$buildNumber',
     ...extraArgs,
   ];
 
-  print("Executing build command: ${buildCommand.join(' ')}");
+  print(
+    'Executing build command: ${buildCommand.join(' ')}',
+  );
 
   // Replace Process.run with Process.start to handle real-time output
   final process =
@@ -84,33 +87,33 @@ Future<void> main(List<String> args) async {
 
   final exitCode = await process.exitCode;
   if (exitCode != 0) {
-    stderr.writeln("Build failed with exit code $exitCode");
+    stderr.writeln('Build failed with exit code $exitCode');
     exit(1);
   }
 
-  print("Build completed successfully");
+  print('Build completed successfully');
 
   final buildDir = Directory(
     path.join(
-      "build",
-      "macos",
-      "Build",
-      "Products",
-      "Release",
-      "$appNamePubspec.app",
+      'build',
+      'macos',
+      'Build',
+      'Products',
+      'Release',
+      '$appNamePubspec.app',
     ),
   );
 
   if (!buildDir.existsSync()) {
-    print("Build directory not found: ${buildDir.path}");
+    print('Build directory not found: ${buildDir.path}');
     exit(1);
   }
 
   final distPath = path.join(
-    "dist",
+    'dist',
     buildNumber,
-    "$appNamePubspec-$buildName+$buildNumber-macos",
-    "$appNamePubspec.app",
+    '$appNamePubspec-$buildName+$buildNumber-macos',
+    '$appNamePubspec.app',
   );
 
   final distDir = Directory(distPath);
@@ -121,5 +124,5 @@ Future<void> main(List<String> args) async {
   // Copy buildDir to distPath
   await copyDirectory(buildDir, Directory(distPath));
 
-  print("Archive created at $distPath");
+  print('Archive created at $distPath');
 }

@@ -110,6 +110,15 @@ None - no external service configuration required.
 - All four API symbols are accessible via `import 'package:desktop_updater/desktop_updater.dart'`
 - No blockers for Phase 5
 
+## Self-Check: PASSED
+
+- lib/src/desktop_updater_api.dart: FOUND
+- test/desktop_updater_api_test.dart: FOUND
+- .planning/phases/04-public-api/04-01-SUMMARY.md: FOUND
+- Commit 3f4d369: FOUND
+- Commit 2345d01: FOUND
+- Commit 2ddf5ec: FOUND
+
 ---
 *Phase: 04-public-api*
 *Completed: 2026-03-26*

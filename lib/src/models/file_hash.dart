@@ -1,4 +1,4 @@
-import "package:flutter/foundation.dart";
+import 'package:flutter/foundation.dart';
 
 /// Represents a file path and its Blake2b hash, used for delta comparison
 /// between the local app bundle and the remote update.
@@ -22,9 +22,9 @@ final class FileHash {
   /// Expects keys: "path", "calculatedHash", "length".
   factory FileHash.fromJson(Map<String, dynamic> json) {
     return FileHash(
-      filePath: json["path"] as String,
-      hash: json["calculatedHash"] as String,
-      length: json["length"] as int,
+      filePath: json['path'] as String,
+      hash: json['calculatedHash'] as String,
+      length: json['length'] as int,
     );
   }
 
@@ -40,9 +40,9 @@ final class FileHash {
   /// Serialises this instance to the JSON format expected by hashes.json.
   Map<String, dynamic> toJson() {
     return {
-      "path": filePath,
-      "calculatedHash": hash,
-      "length": length,
+      'path': filePath,
+      'calculatedHash': hash,
+      'length': length,
     };
   }
 

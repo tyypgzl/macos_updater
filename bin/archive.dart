@@ -1,12 +1,12 @@
 // ignore_for_file: avoid_print, avoid_catches_without_on_clauses
 
-import "dart:convert";
-import "dart:io";
+import 'dart:convert';
+import 'dart:io';
 
-import "package:cryptography_plus/cryptography_plus.dart";
-import "package:desktop_updater/src/models/file_hash.dart";
+import 'package:cryptography_plus/cryptography_plus.dart';
+import 'package:desktop_updater/src/models/file_hash.dart';
 
-import "helper/copy.dart";
+import 'helper/copy.dart';
 
 Future<String> getFileHash(File file) async {
   try {
@@ -20,27 +20,27 @@ Future<String> getFileHash(File file) async {
     // Hash'i utf-8 base64'e dönüştürün ve geri döndürün
     return base64.encode(hash.bytes);
   } catch (e) {
-    print("Error reading file ${file.path}: $e");
-    return "";
+    print('Error reading file ${file.path}: $e');
+    return '';
   }
 }
 
 Future<String?> genFileHashes({required String? path}) async {
-  print("Generating file hashes for $path");
+  print('Generating file hashes for $path');
 
   if (path == null) {
-    throw Exception("Desktop Updater: Executable path is null");
+    throw Exception('Desktop Updater: Executable path is null');
   }
 
   final dir = Directory(path);
 
-  print("Directory path: ${dir.path}");
+  print('Directory path: ${dir.path}');
 
   // Eğer belirtilen yol bir dizinse
-  if (await dir.exists()) {
+  if (dir.existsSync()) {
     // temp dizinindeki dosyaları kopyala
     // dir + output.txt dosyası oluşturulur
-    final outputFile = File("${dir.path}${Platform.pathSeparator}hashes.json");
+    final outputFile = File('${dir.path}${Platform.pathSeparator}hashes.json');
 
     // Çıktı dosyasını açıyoruz
     final sink = outputFile.openWrite();
@@ -51,8 +51,8 @@ Future<String?> genFileHashes({required String? path}) async {
     // Dizin içindeki tüm dosyaları döngüyle okuyoruz
     await for (final entity in dir.list(recursive: true, followLinks: false)) {
       if (entity is File &&
-          !entity.path.endsWith("hashes.json") &&
-          !entity.path.endsWith(".DS_Store")) {
+          !entity.path.endsWith('hashes.json') &&
+          !entity.path.endsWith('.DS_Store')) {
         // Dosyanın hash'ini al
         final hash = await getFileHash(entity);
         final foundPath = entity.path.substring(dir.path.length + 1);
@@ -79,32 +79,32 @@ Future<String?> genFileHashes({required String? path}) async {
     await sink.close();
     return outputFile.path;
   } else {
-    throw Exception("Desktop Updater: Directory does not exist");
+    throw Exception('Desktop Updater: Directory does not exist');
   }
 }
 
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
     print(
-      "Only macos is supported. Usage: dart run desktop_updater:archive macos",
+      'Only macos is supported. Usage: dart run desktop_updater:archive macos',
     );
     exit(1);
   }
 
   final platform = args[0];
 
-  if (platform != "macos") {
+  if (platform != 'macos') {
     print(
-      "Only macos is supported. Usage: dart run desktop_updater:archive macos",
+      'Only macos is supported. Usage: dart run desktop_updater:archive macos',
     );
     exit(1);
   }
 
   // Go to dist directory and get all folder names
-  final distDir = Directory("dist");
+  final distDir = Directory('dist');
 
-  if (!await distDir.exists()) {
-    print("dist folder could not be found");
+  if (!distDir.existsSync()) {
+    print('dist folder could not be found');
     exit(1);
   }
 
@@ -127,11 +127,12 @@ Future<void> main(List<String> args) async {
   for (final file in files) {
     if (file is Directory) {
       // desktop_updater_example-0.1.1+2-macos.app
-      // version is 0.1.1, build number is 2, platform is macos, name is appNamePubspec variable
-      final version = file.path.split("-").elementAt(1).split("+").first;
+      // version is 0.1.1, build number is 2,
+      // platform is macos, name is appNamePubspec variable
+      final version = file.path.split('-').elementAt(1).split('+').first;
       final buildNumber =
-          file.path.split("-").elementAt(1).split("+").last.split("-").first;
-      final foundPlatform = file.path.split("-").last.split(".").first;
+          file.path.split('-').elementAt(1).split('+').last.split('-').first;
+      final foundPlatform = file.path.split('-').last.split('.').first;
 
       if (foundPlatform == platform) {
         platformFound = true;
@@ -143,28 +144,32 @@ Future<void> main(List<String> args) async {
   }
 
   if (!platformFound || foundDirectory == null) {
-    print("File not found for platform: $platform");
+    print('File not found for platform: $platform');
     exit(1);
   } else {
-    print("Using archive: $foundDirectory");
+    print('Using archive: $foundDirectory');
   }
 
   // Get current build name and number from pubspec.yaml
-  final pubspec = File("pubspec.yaml");
+  final pubspec = File('pubspec.yaml');
   final pubspecContent = await pubspec.readAsString();
   final appNamePubspec =
-      RegExp(r"name: (.+)").firstMatch(pubspecContent)!.group(1);
+      RegExp('name: (.+)').firstMatch(pubspecContent)!.group(1);
 
   await copyDirectory(
-    Directory("$foundDirectory/$appNamePubspec.app/Contents"),
+    Directory('$foundDirectory/$appNamePubspec.app/Contents'),
     Directory(
-      "${lastBuildNumberFolder.path}${Platform.pathSeparator}$foundVersion+$foundBuildNumber-macos",
+      '${lastBuildNumberFolder.path}'
+      '${Platform.pathSeparator}'
+      '$foundVersion+$foundBuildNumber-macos',
     ),
   );
 
   await genFileHashes(
     path:
-        "${lastBuildNumberFolder.path}${Platform.pathSeparator}$foundVersion+$foundBuildNumber-$platform",
+        '${lastBuildNumberFolder.path}'
+        '${Platform.pathSeparator}'
+        '$foundVersion+$foundBuildNumber-$platform',
   );
 
   return;

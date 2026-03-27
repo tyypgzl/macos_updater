@@ -1,4 +1,4 @@
-import "package:desktop_updater/src/models/update_info.dart";
+import 'package:desktop_updater/src/models/update_info.dart';
 
 /// Sealed result type returned by the update check function.
 ///

@@ -1,6 +1,6 @@
-import "package:desktop_updater/src/errors/update_error.dart";
-import "package:desktop_updater/src/models/file_hash.dart";
-import "package:desktop_updater/src/models/update_info.dart";
+import 'package:desktop_updater/src/errors/update_error.dart';
+import 'package:desktop_updater/src/models/file_hash.dart';
+import 'package:desktop_updater/src/models/update_info.dart';
 
 /// The backend abstraction for the update engine.
 ///
@@ -29,7 +29,11 @@ import "package:desktop_updater/src/models/update_info.dart";
 ///   Future<List<FileHash>> getRemoteFileHashes(String remoteBaseUrl) async {
 ///     final response = await http.get(Uri.parse("$remoteBaseUrl/hashes.json"));
 ///     final list = jsonDecode(response.body) as List<dynamic>;
-///     return list.map((e) => FileHash.fromJson(e as Map<String, dynamic>)).toList();
+///     return list
+///         .map((e) => FileHash.fromJson(
+///               e as Map<String, dynamic>,
+///             ))
+///         .toList();
 ///   }
 /// }
 /// ```

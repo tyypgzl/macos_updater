@@ -1,4 +1,4 @@
-import "package:flutter/foundation.dart";
+import 'package:flutter/foundation.dart';
 
 /// Represents the progress of a file download during an update.
 ///
@@ -30,7 +30,8 @@ final class UpdateProgress {
   /// Number of files fully downloaded so far.
   final int completedFiles;
 
-  /// Returns a copy of this [UpdateProgress] with the specified fields replaced.
+  /// Returns a copy of this [UpdateProgress] with the
+  /// specified fields replaced.
   UpdateProgress copyWith({
     double? totalBytes,
     double? receivedBytes,

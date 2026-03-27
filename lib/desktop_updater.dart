@@ -6,10 +6,10 @@
 /// Consumers import this file only — no other package imports needed.
 library;
 
-export "package:desktop_updater/src/desktop_updater_api.dart";
-export "package:desktop_updater/src/errors/update_check_result.dart";
-export "package:desktop_updater/src/errors/update_error.dart";
-export "package:desktop_updater/src/models/file_hash.dart";
-export "package:desktop_updater/src/models/update_info.dart";
-export "package:desktop_updater/src/models/update_progress.dart";
-export "package:desktop_updater/src/update_source.dart";
+export 'package:desktop_updater/src/desktop_updater_api.dart';
+export 'package:desktop_updater/src/errors/update_check_result.dart';
+export 'package:desktop_updater/src/errors/update_error.dart';
+export 'package:desktop_updater/src/models/file_hash.dart';
+export 'package:desktop_updater/src/models/update_info.dart';
+export 'package:desktop_updater/src/models/update_progress.dart';
+export 'package:desktop_updater/src/update_source.dart';
