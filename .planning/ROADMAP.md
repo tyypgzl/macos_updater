@@ -98,7 +98,7 @@ Plans:
 
 Plans:
 - [x] 05-01-PLAN.md — Delete all v1/widget files, rewrite barrel to v2-only exports, update example app (REM-01, REM-02, REM-03, REM-04, REM-05)
-- [ ] 05-02-PLAN.md — Write CHANGELOG v2.0.0 migration section with before/after examples for each removed symbol (REM-05)
+- [x] 05-02-PLAN.md — Write CHANGELOG v2.0.0 migration section with before/after examples for each removed symbol (REM-05)
 
 ### Phase 6: Swift Native
 **Goal**: The macOS restart sequence is reliable and the sandbox incompatibility is surfaced clearly
