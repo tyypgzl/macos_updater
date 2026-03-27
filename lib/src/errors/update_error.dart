@@ -33,7 +33,7 @@ final class NetworkError extends UpdateError {
   const NetworkError({required super.message, super.cause});
 }
 
-/// Blake2b hash of a downloaded file does not match the expected hash.
+/// SHA-256 hash of a downloaded file does not match the expected hash.
 final class HashMismatch extends UpdateError {
   /// Creates a [HashMismatch] for the given [filePath] with a [message] and
   /// optional [cause].

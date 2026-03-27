@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cryptography_plus/cryptography_plus.dart';
+import 'package:crypto/crypto.dart';
 import 'package:desktop_updater/src/models/file_hash.dart';
 
 import 'helper/copy.dart';
@@ -13,12 +13,8 @@ Future<String> getFileHash(File file) async {
     // Dosya içeriğini okuyun
     final List<int> fileBytes = await file.readAsBytes();
 
-    // blake2s algoritmasıyla hash hesaplayın
-
-    final hash = await Blake2b().hash(fileBytes);
-
-    // Hash'i utf-8 base64'e dönüştürün ve geri döndürün
-    return base64.encode(hash.bytes);
+    final digest = sha256.convert(fileBytes);
+    return base64.encode(digest.bytes);
   } catch (e) {
     print('Error reading file ${file.path}: $e');
     return '';

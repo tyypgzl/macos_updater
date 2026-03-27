@@ -20,8 +20,7 @@ environment:
 
 dependencies:
   archive: ^4.0.9
-  cryptography_flutter_plus: ^3.0.0
-  cryptography_plus: ^3.0.0
+  crypto: ^3.0.7
   flutter:
     sdk: flutter
   http: ^1.6.0

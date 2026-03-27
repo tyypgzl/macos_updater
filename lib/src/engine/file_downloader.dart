@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cryptography_plus/cryptography_plus.dart';
+import 'package:crypto/crypto.dart';
 import 'package:desktop_updater/src/errors/update_error.dart';
 import 'package:desktop_updater/src/models/file_hash.dart';
 import 'package:desktop_updater/src/models/update_progress.dart';
@@ -12,7 +12,7 @@ import 'package:path/path.dart' as path;
 /// Downloads a single file from [url] into [stagingPath], calling
 /// [onChunk] with the number of bytes received in each chunk.
 ///
-/// After the file is written, re-hashes it using Blake2b and compares
+/// After the file is written, re-hashes it using SHA-256 and compares
 /// against [expectedHash]. Throws [HashMismatch] if they differ.
 ///
 /// Throws [NetworkError] on non-200 HTTP response.
@@ -55,8 +55,8 @@ Future<void> _downloadSingleFile(
 
   // Post-download hash verification.
   final fileBytes = await File(stagingPath).readAsBytes();
-  final hash = await Blake2b().hash(fileBytes);
-  final actualHash = base64.encode(hash.bytes);
+  final digest = sha256.convert(fileBytes);
+  final actualHash = base64.encode(digest.bytes);
 
   if (actualHash != expectedHash) {
     throw HashMismatch(

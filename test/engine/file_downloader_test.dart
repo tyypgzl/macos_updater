@@ -2,7 +2,7 @@ import "dart:async";
 import "dart:convert";
 import "dart:io";
 
-import "package:cryptography_plus/cryptography_plus.dart";
+import "package:crypto/crypto.dart";
 import "package:desktop_updater/src/engine/file_downloader.dart";
 import "package:desktop_updater/src/errors/update_error.dart";
 import "package:desktop_updater/src/models/file_hash.dart";
@@ -11,10 +11,10 @@ import "package:flutter_test/flutter_test.dart";
 import "package:http/http.dart" as http;
 import "package:http/testing.dart";
 
-/// Computes the base64-encoded Blake2b hash of [bytes].
-Future<String> _blake2bBase64(List<int> bytes) async {
-  final hash = await Blake2b().hash(bytes);
-  return base64.encode(hash.bytes);
+/// Computes the base64-encoded SHA-256 hash of [bytes].
+String _sha256Base64(List<int> bytes) {
+  final digest = sha256.convert(bytes);
+  return base64.encode(digest.bytes);
 }
 
 void main() {
@@ -51,7 +51,7 @@ void main() {
       "single file download emits progress events and completes",
       () async {
         final body = [1, 2, 3, 4, 5];
-        final expectedHash = await _blake2bBase64(body);
+        final expectedHash = _sha256Base64(body);
 
         final mockClient = MockClient.streaming(
           (request, bodyStream) async => http.StreamedResponse(
@@ -91,7 +91,7 @@ void main() {
         final chunk1 = [1, 2, 3];
         final chunk2 = [4, 5, 6, 7];
         final allBytes = [...chunk1, ...chunk2];
-        final expectedHash = await _blake2bBase64(allBytes);
+        final expectedHash = _sha256Base64(allBytes);
 
         final bodyController = StreamController<List<int>>();
 
@@ -171,7 +171,7 @@ void main() {
       "optional client parameter is used when provided",
       () async {
         final body = [10, 20, 30];
-        final expectedHash = await _blake2bBase64(body);
+        final expectedHash = _sha256Base64(body);
 
         var mockWasCalled = false;
         final mockClient = MockClient.streaming(

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-/// Represents a file path and its Blake2b hash, used for delta comparison
+/// Represents a file path and its SHA-256 hash, used for delta comparison
 /// between the local app bundle and the remote update.
 ///
 /// JSON keys intentionally differ from Dart field names to maintain
@@ -31,7 +31,7 @@ final class FileHash {
   /// The relative file path within the app bundle.
   final String filePath;
 
-  /// The Blake2b hash of the file contents.
+  /// The SHA-256 hash of the file contents.
   final String hash;
 
   /// The size of the file in bytes.

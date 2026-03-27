@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cryptography_plus/cryptography_plus.dart';
+import 'package:crypto/crypto.dart';
 import 'package:desktop_updater/src/errors/update_error.dart';
 import 'package:desktop_updater/src/models/file_hash.dart';
 
@@ -26,7 +26,7 @@ Directory _resolveAppContentsDir([String? overridePath]) {
   return dir;
 }
 
-/// Computes Blake2b hashes for all files in the running app bundle.
+/// Computes SHA-256 hashes for all files in the running app bundle.
 ///
 /// Uses `Platform.resolvedExecutable` to locate the bundle root.
 /// On macOS the executable is inside `Contents/MacOS/` so one `parent`
@@ -50,8 +50,8 @@ Future<List<FileHash>> generateLocalFileHashes({String? path}) async {
   await for (final entity in dir.list(recursive: true, followLinks: false)) {
     if (entity is File) {
       final fileBytes = await entity.readAsBytes();
-      final hash = await Blake2b().hash(fileBytes);
-      final hashString = base64.encode(hash.bytes);
+      final digest = sha256.convert(fileBytes);
+      final hashString = base64.encode(digest.bytes);
       final relativePath = entity.path.substring(dir.path.length + 1);
 
       if (hashString.isNotEmpty) {

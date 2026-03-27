@@ -16,7 +16,7 @@ import 'package:desktop_updater/src/update_source.dart';
 /// or the remote build number is not greater than the installed build.
 ///
 /// Returns `UpdateAvailable` with a populated `UpdateInfo.changedFiles`
-/// list (diff of local vs remote Blake2b hashes) when the remote build
+/// list (diff of local vs remote SHA-256 hashes) when the remote build
 /// number exceeds the locally installed build number.
 ///
 /// Any exception thrown by the source is caught and wrapped in a
@@ -95,7 +95,7 @@ Future<void> applyUpdate() async {
   }
 }
 
-/// Computes Blake2b hashes for all files in the running app bundle.
+/// Computes SHA-256 hashes for all files in the running app bundle.
 ///
 /// Pass [path] to override `Platform.resolvedExecutable` — used in tests
 /// to point at a temp directory instead of the real app bundle.
