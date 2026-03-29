@@ -71,6 +71,54 @@ switch (result) {
 }
 ```
 
+### Force vs Optional Updates
+
+The engine automatically determines whether an update is mandatory based on the `minBuildNumber` field returned by your `UpdateSource`. If the device's build number is below `minBuildNumber`, the engine sets `isMandatory = true`. If your `UpdateSource` already sets `isMandatory = true`, the engine preserves it.
+
+**Fields on `UpdateInfo`:**
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `isMandatory` | `bool` | `false` | Engine sets this; consumer uses it to drive UI |
+| `minBuildNumber` | `int?` | `null` | Minimum build number that can skip the update |
+| `releaseNotes` | `String?` | `null` | Optional release notes to show in update UI |
+
+**How to set `minBuildNumber` in your `UpdateSource`:**
+
+```dart
+@override
+Future<UpdateInfo?> getLatestUpdateInfo() async {
+  // ... fetch from your server ...
+  return UpdateInfo(
+    version: "2.1.0",
+    buildNumber: 20,
+    remoteBaseUrl: "https://your-server.com/updates/20",
+    changedFiles: const [],
+    minBuildNumber: 15,        // builds below 15 must update
+    releaseNotes: "Bug fixes", // optional, shown in update UI
+  );
+}
+```
+
+**`minBuildNumber` logic:**
+
+| Device build | `minBuildNumber` | `isMandatory` result |
+|-------------|-----------------|---------------------|
+| 12 | 15 | `true` (12 < 15 — engine auto-sets) |
+| 15 | 15 | from `UpdateSource` (>= min) |
+| 20 | 15 | from `UpdateSource` (>= min) |
+
+**Consumer switch pattern:**
+
+```dart
+case UpdateAvailable(:final info):
+  if (info.isMandatory) {
+    showForceUpdateDialog(info);
+  } else {
+    showOptionalUpdateBanner(info);
+  }
+```
+
 ### 3. Download Update
 
 ```dart
