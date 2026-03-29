@@ -95,6 +95,108 @@ void main() {
     });
   });
 
+  group("UpdateInfo — new fields", () {
+    test(
+      "constructed with 4 required fields has isMandatory=false, minBuildNumber=null, releaseNotes=null",
+      () {
+        const info = UpdateInfo(
+          version: "1.0.0",
+          buildNumber: 100,
+          remoteBaseUrl: "https://example.com",
+          changedFiles: [],
+        );
+        expect(info.isMandatory, isFalse);
+        expect(info.minBuildNumber, isNull);
+        expect(info.releaseNotes, isNull);
+      },
+    );
+
+    test("constructed with isMandatory=true preserves the value", () {
+      const info = UpdateInfo(
+        version: "1.0.0",
+        buildNumber: 100,
+        remoteBaseUrl: "https://example.com",
+        changedFiles: [],
+        isMandatory: true,
+      );
+      expect(info.isMandatory, isTrue);
+    });
+
+    test(
+      "constructed with minBuildNumber=15 and releaseNotes preserves both",
+      () {
+        const info = UpdateInfo(
+          version: "1.0.0",
+          buildNumber: 100,
+          remoteBaseUrl: "https://example.com",
+          changedFiles: [],
+          minBuildNumber: 15,
+          releaseNotes: "Bug fixes",
+        );
+        expect(info.minBuildNumber, equals(15));
+        expect(info.releaseNotes, equals("Bug fixes"));
+      },
+    );
+
+    test("copyWith with no arguments returns instance with same 7 fields", () {
+      const info = UpdateInfo(
+        version: "2.0.0",
+        buildNumber: 200,
+        remoteBaseUrl: "https://example.com",
+        changedFiles: [],
+        isMandatory: true,
+        minBuildNumber: 10,
+        releaseNotes: "v2",
+      );
+      final copy = info.copyWith();
+      expect(copy.version, info.version);
+      expect(copy.buildNumber, info.buildNumber);
+      expect(copy.remoteBaseUrl, info.remoteBaseUrl);
+      expect(copy.changedFiles, info.changedFiles);
+      expect(copy.isMandatory, info.isMandatory);
+      expect(copy.minBuildNumber, info.minBuildNumber);
+      expect(copy.releaseNotes, info.releaseNotes);
+    });
+
+    test(
+      "copyWith(isMandatory: true) overrides only isMandatory",
+      () {
+        const info = UpdateInfo(
+          version: "2.0.0",
+          buildNumber: 200,
+          remoteBaseUrl: "https://example.com",
+          changedFiles: [],
+        );
+        final copy = info.copyWith(isMandatory: true);
+        expect(copy.isMandatory, isTrue);
+        expect(copy.version, "2.0.0");
+        expect(copy.buildNumber, 200);
+        expect(copy.remoteBaseUrl, "https://example.com");
+        expect(copy.changedFiles, isEmpty);
+        expect(copy.minBuildNumber, isNull);
+        expect(copy.releaseNotes, isNull);
+      },
+    );
+
+    test(
+      "copyWith(minBuildNumber: 20, releaseNotes: 'v2') overrides only those two",
+      () {
+        const info = UpdateInfo(
+          version: "2.0.0",
+          buildNumber: 200,
+          remoteBaseUrl: "https://example.com",
+          changedFiles: [],
+          isMandatory: true,
+        );
+        final copy = info.copyWith(minBuildNumber: 20, releaseNotes: "v2");
+        expect(copy.minBuildNumber, equals(20));
+        expect(copy.releaseNotes, equals("v2"));
+        expect(copy.isMandatory, isTrue);
+        expect(copy.version, "2.0.0");
+      },
+    );
+  });
+
   group("UpdateProgress", () {
     test("copyWith with no arguments returns equal instance", () {
       const original = UpdateProgress(
