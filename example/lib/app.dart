@@ -94,6 +94,9 @@ class _UpdateExamplePageState
   double _progress = 0;
   UpdateInfo? _updateInfo;
 
+  /// Whether the pending update is mandatory (cannot be skipped).
+  bool _isMandatory = false;
+
   Future<void> _checkForUpdate() async {
     setState(() => _status = 'Checking...');
     try {
@@ -104,9 +107,11 @@ class _UpdateExamplePageState
         case UpdateAvailable(:final info):
           setState(() {
             _updateInfo = info;
-            _status = 'Update available: '
-                '${info.version} '
-                '(${info.changedFiles.length} files)';
+            _isMandatory = info.isMandatory;
+            _status = info.isMandatory
+                ? 'REQUIRED update: ${info.version} — must install'
+                : 'Update available: ${info.version} '
+                    '(${info.changedFiles.length} files)';
           });
       }
     } on UpdateError catch (e) {
@@ -166,6 +171,31 @@ class _UpdateExamplePageState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (_isMandatory && _updateInfo != null)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.deepOrange.shade100,
+                    border: Border.all(
+                      color: Colors.deepOrange,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'Update required — you must install this '
+                    'update to continue.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.deepOrange,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               Text(
                 _status,
                 textAlign: TextAlign.center,

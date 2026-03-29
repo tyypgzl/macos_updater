@@ -1,3 +1,15 @@
+## 2.1.0
+
+### New features
+
+- `UpdateInfo` gains three optional fields: `isMandatory` (bool, default `false`),
+  `minBuildNumber` (int?), and `releaseNotes` (String?). Existing `UpdateSource`
+  implementations require no changes — all fields have defaults.
+- `checkForUpdate()` automatically sets `isMandatory = true` when
+  `minBuildNumber != null && localBuild < minBuildNumber`. If the `UpdateSource`
+  already sets `isMandatory = true`, the engine preserves it.
+- `UpdateInfo.copyWith()` now accepts all three new fields.
+
 ## 2.0.0
 
 **Breaking change:** v2.0.0 is a complete API rewrite. The package is now a headless
