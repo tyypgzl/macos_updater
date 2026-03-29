@@ -17,11 +17,21 @@ import 'package:macos_updater/src/update_source.dart';
 ///
 /// Returns `UpdateAvailable` with a populated `UpdateInfo.changedFiles`
 /// list (diff of local vs remote SHA-256 hashes) when the remote build
-/// number exceeds the locally installed build number.
+/// number exceeds the locally installed build number. The returned
+/// `UpdateInfo.isMandatory` is set to `true` when [UpdateInfo.minBuildNumber]
+/// is non-null and the local build is below that threshold, or when the source
+/// already provided `isMandatory: true` (OR logic, D-22 / D-23).
 ///
 /// Any exception thrown by the source is caught and wrapped in a
 /// `NetworkError` — no raw exception escapes this function.
-Future<UpdateCheckResult> checkForUpdate(UpdateSource source) async {
+///
+/// Pass [localHashesPath] to override `Platform.resolvedExecutable` for the
+/// local file-hash scan — used in tests to point at a temp directory instead
+/// of the real app bundle.
+Future<UpdateCheckResult> checkForUpdate(
+  UpdateSource source, {
+  String? localHashesPath,
+}) async {
   try {
     final remoteInfo = await source.getLatestUpdateInfo();
     if (remoteInfo == null) {
@@ -34,12 +44,25 @@ Future<UpdateCheckResult> checkForUpdate(UpdateSource source) async {
       return const UpToDate();
     }
 
-    final localHashes = await hasher.generateLocalFileHashes();
+    final localHashes =
+        await hasher.generateLocalFileHashes(path: localHashesPath);
     final remoteHashes =
         await source.getRemoteFileHashes(remoteInfo.remoteBaseUrl);
     final changedFiles = hasher.diffFileHashes(localHashes, remoteHashes);
 
-    return UpdateAvailable(remoteInfo.copyWith(changedFiles: changedFiles));
+    // D-22: engine sets isMandatory=true when localBuild < minBuildNumber.
+    // D-23: if source already set isMandatory=true, preserve it (OR logic).
+    final isMandatory =
+        remoteInfo.isMandatory ||
+        (remoteInfo.minBuildNumber != null &&
+            localBuild < remoteInfo.minBuildNumber!);
+
+    return UpdateAvailable(
+      remoteInfo.copyWith(
+        changedFiles: changedFiles,
+        isMandatory: isMandatory,
+      ),
+    );
   } catch (e) {
     throw NetworkError(
       message: 'checkForUpdate failed: $e',

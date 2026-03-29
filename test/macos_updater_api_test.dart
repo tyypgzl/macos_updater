@@ -67,12 +67,18 @@ const _remoteUrl = "https://example.com/updates";
 UpdateInfo _makeUpdateInfo({
   int buildNumber = 200,
   List<FileHash> changedFiles = const [],
+  bool isMandatory = false,
+  int? minBuildNumber,
+  String? releaseNotes,
 }) {
   return UpdateInfo(
     version: "2.0.0",
     buildNumber: buildNumber,
     remoteBaseUrl: _remoteUrl,
     changedFiles: changedFiles,
+    isMandatory: isMandatory,
+    minBuildNumber: minBuildNumber,
+    releaseNotes: releaseNotes,
   );
 }
 
@@ -179,6 +185,118 @@ void main() {
         );
       },
     );
+
+    group("isMandatory enforcement", () {
+      late Directory tempRoot;
+      late String localHashesPath;
+
+      setUp(() {
+        // Mirror the macOS layout: tempRoot/Contents/MacOS/fake_executable
+        tempRoot = Directory.systemTemp.createTempSync("check_update_test_");
+        final macosDir = Directory("${tempRoot.path}/Contents/MacOS")
+          ..createSync(recursive: true);
+        localHashesPath = "${macosDir.path}/fake_executable";
+      });
+
+      tearDown(() {
+        if (tempRoot.existsSync()) {
+          tempRoot.deleteSync(recursive: true);
+        }
+      });
+
+      test(
+        "sets isMandatory=true when minBuildNumber=15 and localBuild=12",
+        () async {
+          mockPlatform.versionToReturn = 12;
+          final source = MockUpdateSource(
+            updateInfo: _makeUpdateInfo(
+              buildNumber: 200,
+              minBuildNumber: 15,
+            ),
+          );
+          final result = await checkForUpdate(
+            source,
+            localHashesPath: localHashesPath,
+          );
+          expect(result, isA<UpdateAvailable>());
+          expect((result as UpdateAvailable).info.isMandatory, isTrue);
+        },
+      );
+
+      test(
+        "leaves isMandatory=false when minBuildNumber=15 and localBuild=15",
+        () async {
+          mockPlatform.versionToReturn = 15;
+          final source = MockUpdateSource(
+            updateInfo: _makeUpdateInfo(
+              buildNumber: 200,
+              minBuildNumber: 15,
+            ),
+          );
+          final result = await checkForUpdate(
+            source,
+            localHashesPath: localHashesPath,
+          );
+          expect(result, isA<UpdateAvailable>());
+          expect((result as UpdateAvailable).info.isMandatory, isFalse);
+        },
+      );
+
+      test(
+        "leaves isMandatory=false when minBuildNumber=null",
+        () async {
+          mockPlatform.versionToReturn = 12;
+          final source = MockUpdateSource(
+            updateInfo: _makeUpdateInfo(buildNumber: 200),
+          );
+          final result = await checkForUpdate(
+            source,
+            localHashesPath: localHashesPath,
+          );
+          expect(result, isA<UpdateAvailable>());
+          expect((result as UpdateAvailable).info.isMandatory, isFalse);
+        },
+      );
+
+      test(
+        "preserves isMandatory=true when source set it and minBuildNumber=null",
+        () async {
+          mockPlatform.versionToReturn = 12;
+          final source = MockUpdateSource(
+            updateInfo: _makeUpdateInfo(
+              buildNumber: 200,
+              isMandatory: true,
+            ),
+          );
+          final result = await checkForUpdate(
+            source,
+            localHashesPath: localHashesPath,
+          );
+          expect(result, isA<UpdateAvailable>());
+          expect((result as UpdateAvailable).info.isMandatory, isTrue);
+        },
+      );
+
+      test(
+        "preserves isMandatory=true when source set it even if localBuild >= minBuildNumber",
+        () async {
+          mockPlatform.versionToReturn = 20;
+          final source = MockUpdateSource(
+            updateInfo: _makeUpdateInfo(
+              buildNumber: 200,
+              isMandatory: true,
+              minBuildNumber: 15,
+            ),
+          );
+          final result = await checkForUpdate(
+            source,
+            localHashesPath: localHashesPath,
+          );
+          expect(result, isA<UpdateAvailable>());
+          expect((result as UpdateAvailable).info.isMandatory, isTrue);
+        },
+      );
+    });
   });
 
   // -------------------------------------------------------------------------
