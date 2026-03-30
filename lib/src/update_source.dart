@@ -1,6 +1,5 @@
-import 'package:macos_updater/src/errors/update_error.dart';
 import 'package:macos_updater/src/models/file_hash.dart';
-import 'package:macos_updater/src/models/update_info.dart';
+import 'package:macos_updater/src/models/update_details.dart';
 
 /// The backend abstraction for the update engine.
 ///
@@ -12,22 +11,24 @@ import 'package:macos_updater/src/models/update_info.dart';
 /// ```dart
 /// class FirebaseUpdateSource implements UpdateSource {
 ///   @override
-///   Future<UpdateInfo?> getLatestUpdateInfo() async {
-///     final config = FirebaseRemoteConfig.instance;
-///     await config.fetchAndActivate();
-///     final build = config.getInt("build_number");
-///     if (build == 0) return null;
-///     return UpdateInfo(
-///       version: config.getString("version"),
-///       buildNumber: build,
-///       remoteBaseUrl: config.getString("remote_base_url"),
-///       changedFiles: const [],
+///   Future<UpdateDetails?> getUpdateDetails() async {
+///     final json = await fetchFromBackend();
+///     final macosJson = json['macos'] as Map<String, dynamic>?;
+///     if (macosJson == null) return null;
+///     return UpdateDetails(
+///       macos: PlatformUpdateDetails(
+///         minimum: macosJson['minimum'] as String,
+///         latest: macosJson['latest'] as String,
+///         active: macosJson['active'] as bool,
+///       ),
+///       remoteBaseUrl: json['remoteBaseUrl'] as String?,
 ///     );
 ///   }
 ///
 ///   @override
 ///   Future<List<FileHash>> getRemoteFileHashes(String remoteBaseUrl) async {
-///     final response = await http.get(Uri.parse("$remoteBaseUrl/hashes.json"));
+///     final response =
+///         await http.get(Uri.parse('$remoteBaseUrl/hashes.json'));
 ///     final list = jsonDecode(response.body) as List<dynamic>;
 ///     return list
 ///         .map((e) => FileHash.fromJson(
@@ -40,19 +41,36 @@ import 'package:macos_updater/src/models/update_info.dart';
 ///
 /// Consumer implementations may throw any exception — the engine wraps
 /// all [UpdateSource] calls in try-catch and maps unknown exceptions to
-/// a typed [UpdateError] subtype. Consumers do NOT need to throw [UpdateError].
+/// a typed `UpdateError` subtype. Consumers do NOT need to throw `UpdateError`.
 abstract interface class UpdateSource {
-  /// Returns the latest [UpdateInfo] from the consumer's backend,
-  /// or `null` if the app is already up-to-date.
+  /// Returns platform-specific update configuration from the consumer's
+  /// backend, or `null` if no update information is available.
   ///
-  /// The engine calls this to determine whether an update is available.
-  /// Pass an [UpdateInfo] with an empty [UpdateInfo.changedFiles] list —
-  /// the engine populates that field via hash diffing.
-  Future<UpdateInfo?> getLatestUpdateInfo();
+  /// The engine reads [UpdateDetails.macos] to determine the minimum and latest
+  /// versions for the current platform. Return `null` to signal up-to-date.
+  ///
+  /// Example:
+  /// ```dart
+  /// @override
+  /// Future<UpdateDetails?> getUpdateDetails() async {
+  ///   final json = await fetchFromBackend();
+  ///   final macosJson = json['macos'] as Map<String, dynamic>?;
+  ///   if (macosJson == null) return null;
+  ///   return UpdateDetails(
+  ///     macos: PlatformUpdateDetails(
+  ///       minimum: macosJson['minimum'] as String,
+  ///       latest: macosJson['latest'] as String,
+  ///       active: macosJson['active'] as bool,
+  ///     ),
+  ///     remoteBaseUrl: json['remoteBaseUrl'] as String?,
+  ///   );
+  /// }
+  /// ```
+  Future<UpdateDetails?> getUpdateDetails();
 
   /// Returns the list of all remote file hashes for the given [remoteBaseUrl].
   ///
-  /// The engine passes [UpdateInfo.remoteBaseUrl] as [remoteBaseUrl].
+  /// The engine passes [UpdateDetails.remoteBaseUrl] as [remoteBaseUrl].
   /// Implementations should fetch the `hashes.json` produced by the CLI
   /// and parse each entry using [FileHash.fromJson].
   Future<List<FileHash>> getRemoteFileHashes(String remoteBaseUrl);

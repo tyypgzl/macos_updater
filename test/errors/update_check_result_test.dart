@@ -15,7 +15,6 @@ String describeResult(UpdateCheckResult result) {
 
 UpdateInfo _makeInfo(String version) => UpdateInfo(
   version: version,
-  buildNumber: 100,
   remoteBaseUrl: "https://example.com",
   changedFiles: const [FileHash(filePath: "a", hash: "h", length: 1)],
 );
@@ -32,7 +31,6 @@ void main() {
       final result = ForceUpdateRequired(info);
       expect(result, isA<UpdateCheckResult>());
       expect(result.info.version, equals("1.0.0"));
-      expect(result.info.buildNumber, equals(100));
     });
 
     test("OptionalUpdateAvailable carries info field correctly", () {

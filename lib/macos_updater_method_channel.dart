@@ -31,8 +31,9 @@ class MethodChannelMacosUpdater extends MacosUpdaterPlatform {
   }
 
   @override
-  Future<int> getCurrentVersion() async {
-    final version = await methodChannel.invokeMethod<int>('getCurrentVersion');
+  Future<String> getCurrentVersion() async {
+    final version =
+        await methodChannel.invokeMethod<String>('getCurrentVersion');
     return version!;
   }
 }
