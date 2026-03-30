@@ -2,7 +2,7 @@
 
 A headless Flutter plugin for macOS desktop OTA updates. Downloads only changed files by comparing Blake2b file hashes — no full app re-download needed. Bring your own backend via the abstract `UpdateSource` interface (Firebase Remote Config, REST API, S3, local file, etc.).
 
-**v2.0.0** is a complete rewrite. No built-in UI — you build your own. See the [migration guide](#migrating-from-v1) if upgrading.
+**v2.2.0** introduces a semver version model. See [CHANGELOG.md](CHANGELOG.md) for the migration guide if upgrading from v2.1.0.
 
 ## Getting Started
 
@@ -10,7 +10,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  macos_updater: ^2.0.0
+  macos_updater: ^2.2.0
 ```
 
 ## Usage
@@ -24,21 +24,25 @@ import "package:macos_updater/macos_updater.dart";
 
 class MyUpdateSource implements UpdateSource {
   @override
-  Future<UpdateInfo?> getLatestUpdateInfo() async {
-    // Fetch version metadata from your server.
-    // Return null if the app is already up-to-date.
-    // Return UpdateInfo if a newer version exists.
+  Future<UpdateDetails?> getUpdateDetails() async {
+    // Fetch version config from your server.
+    // Return null if no update config is available.
     final response = await http.get(
-      Uri.parse("https://your-server.com/app-archive.json"),
+      Uri.parse("https://your-server.com/update-details.json"),
     );
     if (response.statusCode != 200) return null;
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
-    return UpdateInfo(
-      version: json["version"] as String,       // display only
-      buildNumber: json["buildNumber"] as int,   // used for comparison
-      remoteBaseUrl: json["url"] as String,      // where update files are hosted
-      changedFiles: const [],                    // engine populates this
+    final macosJson = json["macos"] as Map<String, dynamic>?;
+    if (macosJson == null) return null;
+
+    return UpdateDetails(
+      macos: PlatformUpdateDetails(
+        minimum: macosJson["minimum"] as String,   // minimum version — below this forces update
+        latest: macosJson["latest"] as String,     // latest available version
+        active: macosJson["active"] as bool,       // false disables update checking
+      ),
+      remoteBaseUrl: json["remoteBaseUrl"] as String,
     );
   }
 
@@ -56,7 +60,22 @@ class MyUpdateSource implements UpdateSource {
 }
 ```
 
+The JSON your server returns should look like:
+
+```json
+{
+  "macos": {
+    "minimum": "1.0.1",
+    "latest": "1.0.2",
+    "active": true
+  },
+  "remoteBaseUrl": "https://your-server.com/updates/1.0.2"
+}
+```
+
 ### 2. Check for Updates
+
+The engine compares the running app's version (read from `CFBundleShortVersionString`) against `PlatformUpdateDetails.minimum` and `PlatformUpdateDetails.latest` using semantic versioning. The result is a 3-way sealed type:
 
 ```dart
 final source = MyUpdateSource();
@@ -65,59 +84,34 @@ final result = await checkForUpdate(source);
 switch (result) {
   case UpToDate():
     print("App is up to date!");
-  case UpdateAvailable(:final info):
-    print("Update available: ${info.version}");
+  case ForceUpdateRequired(:final info):
+    // Current version is below the minimum — user must update.
+    print("Required update to ${info.version}");
+    showForceUpdateBanner(info);
+  case OptionalUpdateAvailable(:final info):
+    // Update available but current version meets the minimum.
+    print("Optional update to ${info.version}");
     print("${info.changedFiles.length} files to download");
+    showOptionalUpdatePrompt(info);
 }
 ```
 
-### Force vs Optional Updates
+**Version comparison logic:**
 
-The engine automatically determines whether an update is mandatory based on the `minBuildNumber` field returned by your `UpdateSource`. If the device's build number is below `minBuildNumber`, the engine sets `isMandatory = true`. If your `UpdateSource` already sets `isMandatory = true`, the engine preserves it.
+| Current version vs config | Result |
+|---------------------------|--------|
+| `current >= latest` | `UpToDate` |
+| `current < minimum` | `ForceUpdateRequired` |
+| `minimum <= current < latest` | `OptionalUpdateAvailable` |
 
 **Fields on `UpdateInfo`:**
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `isMandatory` | `bool` | `false` | Engine sets this; consumer uses it to drive UI |
-| `minBuildNumber` | `int?` | `null` | Minimum build number that can skip the update |
-| `releaseNotes` | `String?` | `null` | Optional release notes to show in update UI |
-
-**How to set `minBuildNumber` in your `UpdateSource`:**
-
-```dart
-@override
-Future<UpdateInfo?> getLatestUpdateInfo() async {
-  // ... fetch from your server ...
-  return UpdateInfo(
-    version: "2.1.0",
-    buildNumber: 20,
-    remoteBaseUrl: "https://your-server.com/updates/20",
-    changedFiles: const [],
-    minBuildNumber: 15,        // builds below 15 must update
-    releaseNotes: "Bug fixes", // optional, shown in update UI
-  );
-}
-```
-
-**`minBuildNumber` logic:**
-
-| Device build | `minBuildNumber` | `isMandatory` result |
-|-------------|-----------------|---------------------|
-| 12 | 15 | `true` (12 < 15 — engine auto-sets) |
-| 15 | 15 | from `UpdateSource` (>= min) |
-| 20 | 15 | from `UpdateSource` (>= min) |
-
-**Consumer switch pattern:**
-
-```dart
-case UpdateAvailable(:final info):
-  if (info.isMandatory) {
-    showForceUpdateDialog(info);
-  } else {
-    showOptionalUpdateBanner(info);
-  }
-```
+| Field | Type | Description |
+|-------|------|-------------|
+| `version` | `String` | Latest version (semver string) |
+| `minimumVersion` | `String?` | Minimum required version |
+| `remoteBaseUrl` | `String` | Base URL where update files are hosted |
+| `changedFiles` | `List<FileHash>` | Files that differ from the running version |
 
 ### 3. Download Update
 
@@ -147,18 +141,20 @@ try {
 ```dart
 class FirebaseUpdateSource implements UpdateSource {
   @override
-  Future<UpdateInfo?> getLatestUpdateInfo() async {
+  Future<UpdateDetails?> getUpdateDetails() async {
     final config = FirebaseRemoteConfig.instance;
     await config.fetchAndActivate();
 
-    final build = config.getInt("latest_build_number");
-    if (build == 0) return null;
+    final latest = config.getString("macos_latest_version");
+    if (latest.isEmpty) return null;
 
-    return UpdateInfo(
-      version: config.getString("latest_version"),
-      buildNumber: build,
-      remoteBaseUrl: config.getString("update_base_url"),
-      changedFiles: const [],
+    return UpdateDetails(
+      macos: PlatformUpdateDetails(
+        minimum: config.getString("macos_minimum_version"),
+        latest: latest,
+        active: config.getBool("macos_update_active"),
+      ),
+      remoteBaseUrl: config.getString("macos_update_base_url"),
     );
   }
 
@@ -205,7 +201,7 @@ try {
 
 | Function | Description |
 |----------|-------------|
-| `checkForUpdate(UpdateSource source)` | Returns `UpToDate` or `UpdateAvailable(info)` |
+| `checkForUpdate(UpdateSource source)` | Returns `UpToDate`, `ForceUpdateRequired(info)`, or `OptionalUpdateAvailable(info)` |
 | `downloadUpdate(UpdateInfo info, {onProgress})` | Downloads only changed files with progress callback |
 | `applyUpdate()` | Restarts the app to apply the downloaded update |
 | `generateLocalFileHashes({String? path})` | Computes Blake2b hashes for the running app bundle |
@@ -215,10 +211,12 @@ try {
 | Type | Description |
 |------|-------------|
 | `UpdateSource` | Abstract interface — implement to connect your backend |
-| `UpdateInfo` | Version metadata: version, buildNumber, remoteBaseUrl, changedFiles |
+| `UpdateDetails` | Version config returned by `getUpdateDetails()`: wraps per-platform `PlatformUpdateDetails` |
+| `PlatformUpdateDetails` | Per-platform config: `minimum` (String), `latest` (String), `active` (bool) |
+| `UpdateInfo` | Version metadata populated by engine: `version`, `minimumVersion`, `remoteBaseUrl`, `changedFiles` |
 | `FileHash` | File path + Blake2b hash + file length |
-| `UpdateProgress` | Download progress: totalBytes, receivedBytes, currentFile, totalFiles, completedFiles |
-| `UpdateCheckResult` | Sealed: `UpToDate` or `UpdateAvailable(info)` |
+| `UpdateProgress` | Download progress: `totalBytes`, `receivedBytes`, `currentFile`, `totalFiles`, `completedFiles` |
+| `UpdateCheckResult` | Sealed: `UpToDate`, `ForceUpdateRequired(info)`, or `OptionalUpdateAvailable(info)` |
 | `UpdateError` | Sealed: `NetworkError`, `HashMismatch`, `NoPlatformEntry`, `IncompatibleVersion`, `RestartFailed` |
 
 ## CLI Commands
@@ -233,7 +231,7 @@ dart run macos_updater:release macos
 dart run macos_updater:archive macos
 ```
 
-This creates a `dist/{buildNumber}/{version}+{buildNumber}-macos/` folder with your app files and a `hashes.json` manifest. Upload this folder to your server — the engine downloads individual files from it.
+This creates a `dist/{version}-macos/` folder with your app files and a `hashes.json` manifest. Upload this folder to your server — the engine downloads individual files from it.
 
 ## How Delta Updates Work
 
@@ -247,6 +245,17 @@ This creates a `dist/{buildNumber}/{version}+{buildNumber}-macos/` folder with y
 - Flutter 3.29+ / Dart 3.7+
 - macOS 10.15+ (deployment target)
 - App must NOT be sandboxed (App Sandbox blocks bundle writes)
+
+## Migrating from v2.1.0
+
+v2.2.0 replaces integer build numbers with semantic versioning. See [CHANGELOG.md](CHANGELOG.md) for the full migration guide with before/after code examples.
+
+**Key changes:**
+- `getLatestUpdateInfo()` → `getUpdateDetails()` returning `UpdateDetails`
+- `UpdateAvailable` → `ForceUpdateRequired` or `OptionalUpdateAvailable`
+- `UpdateInfo.buildNumber` (int) → `UpdateInfo.version` (semver String)
+- `UpdateInfo.minBuildNumber` (int?) → `UpdateInfo.minimumVersion` (String?)
+- `UpdateInfo.isMandatory` (bool) → Inferred from result type
 
 ## Migrating from v1
 
