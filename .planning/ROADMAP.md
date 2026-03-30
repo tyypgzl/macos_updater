@@ -149,8 +149,21 @@ Phases 1 → 2 → 3 → 4 are sequential. Phases 5, 6, 7 are independent and ca
 **Goal:** Consumers can enforce mandatory updates via a single isMandatory flag on UpdateInfo. The engine auto-sets it when the device's build is below minBuildNumber. Consumers use isMandatory to branch between force-update and optional-update UI without implementing version arithmetic themselves.
 **Requirements**: D-19, D-20, D-21, D-22, D-23, D-24
 **Depends on:** Phase 7
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 08-01-PLAN.md — Extend UpdateInfo with isMandatory/minBuildNumber/releaseNotes fields and add enforcement logic in checkForUpdate (D-19, D-20, D-21, D-22, D-23)
-- [ ] 08-02-PLAN.md — Update README, CHANGELOG (v2.1.0), and example app to document and demonstrate force vs optional update (D-20, D-21, D-24)
+- [x] 08-01-PLAN.md — Extend UpdateInfo with isMandatory/minBuildNumber/releaseNotes fields and add enforcement logic in checkForUpdate (D-19, D-20, D-21, D-22, D-23)
+- [x] 08-02-PLAN.md — Update README, CHANGELOG (v2.1.0), and example app to document and demonstrate force vs optional update (D-20, D-21, D-24)
+
+### Phase 9: Semver version model with platform-specific config and ForceUpdateChecker
+
+**Goal:** Replace int buildNumber comparison with semver string comparison using pub_semver. Add platform-specific config model (PlatformUpdateDetails, UpdateDetails). Refactor UpdateSource and checkForUpdate to work with semver. Extend UpdateCheckResult to three-way sealed result (UpToDate, ForceUpdateRequired, OptionalUpdateAvailable).
+**Requirements**: SEM-01, SEM-02, SEM-03, SEM-04, SEM-05, SEM-06, SEM-07, SEM-08, SEM-09, SEM-10
+**Depends on:** Phase 8
+**Plans:** 4 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — New config models (PlatformUpdateDetails, UpdateDetails), 3-way UpdateCheckResult, pub_semver dependency (SEM-01, SEM-02, SEM-03)
+- [ ] 09-02-PLAN.md — UpdateInfo semver restructure (remove buildNumber/isMandatory), UpdateSource.getUpdateDetails(), platform getCurrentVersion() → String + Swift CFBundleShortVersionString (SEM-04, SEM-05, SEM-06)
+- [ ] 09-03-PLAN.md — Rewrite checkForUpdate() with semver logic, update barrel exports, update all tests (SEM-07, SEM-08)
+- [ ] 09-04-PLAN.md — Example app 3-way result demo, CHANGELOG v2.2.0 migration guide, README update, version bump (SEM-09, SEM-10)
