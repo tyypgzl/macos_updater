@@ -1,6 +1,6 @@
-# Desktop Updater
+# macOS Updater
 
-A headless Flutter plugin for macOS desktop OTA updates. Downloads only changed files by comparing Blake2b file hashes — no full app re-download needed. Bring your own backend via the abstract `UpdateSource` interface (Firebase Remote Config, REST API, S3, local file, etc.).
+A headless Flutter plugin for macOS desktop OTA updates. Downloads only changed files by comparing SHA-256 file hashes — no full app re-download needed. Bring your own backend via the abstract `UpdateSource` interface (Firebase Remote Config, REST API, S3, local file, etc.).
 
 **v2.2.0** introduces a semver version model. See [CHANGELOG.md](CHANGELOG.md) for the migration guide if upgrading from v2.1.0.
 
@@ -112,6 +112,7 @@ switch (result) {
 | `minimumVersion` | `String?` | Minimum required version |
 | `remoteBaseUrl` | `String` | Base URL where update files are hosted |
 | `changedFiles` | `List<FileHash>` | Files that differ from the running version |
+| `releaseNotes` | `String?` | Human-readable release notes for display |
 
 ### 3. Download Update
 
@@ -204,7 +205,7 @@ try {
 | `checkForUpdate(UpdateSource source)` | Returns `UpToDate`, `ForceUpdateRequired(info)`, or `OptionalUpdateAvailable(info)` |
 | `downloadUpdate(UpdateInfo info, {onProgress})` | Downloads only changed files with progress callback |
 | `applyUpdate()` | Restarts the app to apply the downloaded update |
-| `generateLocalFileHashes({String? path})` | Computes Blake2b hashes for the running app bundle |
+| `generateLocalFileHashes({String? path})` | Computes SHA-256 hashes for the running app bundle |
 
 ### Types
 
@@ -214,7 +215,7 @@ try {
 | `UpdateDetails` | Version config returned by `getUpdateDetails()`: wraps per-platform `PlatformUpdateDetails` |
 | `PlatformUpdateDetails` | Per-platform config: `minimum` (String), `latest` (String), `active` (bool) |
 | `UpdateInfo` | Version metadata populated by engine: `version`, `minimumVersion`, `remoteBaseUrl`, `changedFiles` |
-| `FileHash` | File path + Blake2b hash + file length |
+| `FileHash` | File path + SHA-256 hash + file length |
 | `UpdateProgress` | Download progress: `totalBytes`, `receivedBytes`, `currentFile`, `totalFiles`, `completedFiles` |
 | `UpdateCheckResult` | Sealed: `UpToDate`, `ForceUpdateRequired(info)`, or `OptionalUpdateAvailable(info)` |
 | `UpdateError` | Sealed: `NetworkError`, `HashMismatch`, `NoPlatformEntry`, `IncompatibleVersion`, `RestartFailed` |
@@ -235,7 +236,7 @@ This creates a `dist/{version}-macos/` folder with your app files and a `hashes.
 
 ## How Delta Updates Work
 
-1. **Build time:** CLI generates `hashes.json` with Blake2b hashes for every file in your `.app` bundle
+1. **Build time:** CLI generates `hashes.json` with SHA-256 hashes for every file in your `.app` bundle
 2. **Runtime:** Engine computes local file hashes and compares against remote `hashes.json`
 3. **Download:** Only files with different hashes are downloaded (delta update)
 4. **Apply:** Native Swift code copies updated files into the app bundle and restarts
