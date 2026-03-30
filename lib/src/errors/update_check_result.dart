@@ -6,7 +6,8 @@ import 'package:macos_updater/src/models/update_info.dart';
 /// ```dart
 /// switch (result) {
 ///   case UpToDate() => showUpToDateMessage(),
-///   case UpdateAvailable(:final info) => promptDownload(info),
+///   case ForceUpdateRequired(:final info) => showMandatoryUpdateUI(info),
+///   case OptionalUpdateAvailable(:final info) => promptDownload(info),
 /// }
 /// ```
 sealed class UpdateCheckResult {
@@ -20,12 +21,27 @@ final class UpToDate extends UpdateCheckResult {
   const UpToDate();
 }
 
-/// An update is available. [info] contains version metadata and
-/// the list of changed files to download.
-final class UpdateAvailable extends UpdateCheckResult {
-  /// Creates an [UpdateAvailable] result with the given update [info].
-  const UpdateAvailable(this.info);
+/// The installed version is below the minimum required version.
+///
+/// The consumer MUST prompt the user to update — the app cannot continue
+/// on the current version. [info] contains version metadata and the list
+/// of changed files to download.
+final class ForceUpdateRequired extends UpdateCheckResult {
+  /// Creates a [ForceUpdateRequired] result with the given update [info].
+  const ForceUpdateRequired(this.info);
 
-  /// Version metadata and changed files for the available update.
+  /// Version metadata and changed files for the mandatory update.
+  final UpdateInfo info;
+}
+
+/// An update is available but the current version meets the minimum.
+///
+/// The consumer may offer the user a choice to update or skip.
+/// [info] contains version metadata and the list of changed files to download.
+final class OptionalUpdateAvailable extends UpdateCheckResult {
+  /// Creates an [OptionalUpdateAvailable] result with the given update [info].
+  const OptionalUpdateAvailable(this.info);
+
+  /// Version metadata and changed files for the optional update.
   final UpdateInfo info;
 }
