@@ -46,8 +46,9 @@ abstract class MacosUpdaterPlatform extends PlatformInterface {
     throw UnimplementedError('getExecutablePath() has not been implemented.');
   }
 
-  /// Returns the current app build number (CFBundleVersion on macOS).
-  Future<int> getCurrentVersion() {
+  /// Returns the current app version string (CFBundleShortVersionString on
+  /// macOS), e.g. '1.0.2'. Used by the engine for semver comparison.
+  Future<String> getCurrentVersion() {
     throw UnimplementedError('getCurrentVersion() has not been implemented.');
   }
 }

@@ -2,10 +2,9 @@ import Cocoa
 import FlutterMacOS
 
 public class MacosUpdaterPlugin: NSObject, FlutterPlugin {
-    private func getCurrentVersion() -> Int? {
+    private func getCurrentVersion() -> String? {
         let infoDictionary = Bundle.main.infoDictionary!
-        let version = infoDictionary["CFBundleVersion"] as! String
-        return Int(version)
+        return infoDictionary["CFBundleShortVersionString"] as? String
     }
 
     private func restartApp(result: @escaping FlutterResult) {
