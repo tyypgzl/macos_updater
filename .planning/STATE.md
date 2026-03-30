@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 09-01-PLAN.md
-last_updated: "2026-03-30T06:22:25.934Z"
+stopped_at: Completed 09-03-PLAN.md
+last_updated: "2026-03-30T06:39:47.237Z"
 last_activity: 2026-03-30
 progress:
   total_phases: 9
   completed_phases: 8
   total_plans: 18
-  completed_plans: 15
+  completed_plans: 17
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-26)
 ## Current Position
 
 Phase: 09 (semver-version-model) — EXECUTING
-Plan: 2 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-03-30
 
@@ -67,6 +67,8 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 08-force-and-optional-update-management-via-updateconfig P01 | 5m | 2 tasks | 4 files |
 | Phase 08-force-and-optional-update-management-via-updateconfig P02 | 3m | 2 tasks | 3 files |
 | Phase 09 P01 | 4m | 3 tasks | 7 files |
+| Phase 09 P02 | 5m | 2 tasks | 9 files |
+| Phase 09 P03 | 4m | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -114,6 +116,11 @@ Recent decisions affecting current work:
 - [Phase 08-force-and-optional-update-management-via-updateconfig]: Cherry-picked 08-01 commits into worktree before executing 08-02 — worktree was behind main branch
 - [Phase 09]: pub_semver 2.2.0 resolved (^2.1.4 constraint) — no API conflicts
 - [Phase 09]: prefer_single_quotes enforced in analysis_options — lib files use single quotes; analyzer rule is authoritative over CLAUDE.md convention
+- [Phase 09]: UpdateInfo drops buildNumber/isMandatory/minBuildNumber — semver string comparison replaces int comparison
+- [Phase 09]: UpdateSource.getUpdateDetails() returns Future<UpdateDetails?> replacing getLatestUpdateInfo() — aligns with platform-specific config model
+- [Phase 09]: getCurrentVersion() returns Future<String> reading CFBundleShortVersionString — avoids integer conversion fragility
+- [Phase 09]: checkForUpdate() uses pub_semver Version.parse() for all version comparisons — replaces int buildNumber comparison
+- [Phase 09]: Three-way UpdateCheckResult: UpToDate | ForceUpdateRequired | OptionalUpdateAvailable — UpdateAvailable fully removed
 
 ### Roadmap Evolution
 
@@ -136,6 +143,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T06:22:25.931Z
-Stopped at: Completed 09-01-PLAN.md
+Last session: 2026-03-30T06:39:47.234Z
+Stopped at: Completed 09-03-PLAN.md
 Resume file: None

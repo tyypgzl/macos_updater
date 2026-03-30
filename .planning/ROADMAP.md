@@ -160,10 +160,10 @@ Plans:
 **Goal:** Replace int buildNumber comparison with semver string comparison using pub_semver. Add platform-specific config model (PlatformUpdateDetails, UpdateDetails). Refactor UpdateSource and checkForUpdate to work with semver. Extend UpdateCheckResult to three-way sealed result (UpToDate, ForceUpdateRequired, OptionalUpdateAvailable).
 **Requirements**: SEM-01, SEM-02, SEM-03, SEM-04, SEM-05, SEM-06, SEM-07, SEM-08, SEM-09, SEM-10
 **Depends on:** Phase 8
-**Plans:** 1/4 plans executed
+**Plans:** 3/4 plans executed
 
 Plans:
 - [x] 09-01-PLAN.md — New config models (PlatformUpdateDetails, UpdateDetails), 3-way UpdateCheckResult, pub_semver dependency (SEM-01, SEM-02, SEM-03)
-- [ ] 09-02-PLAN.md — UpdateInfo semver restructure (remove buildNumber/isMandatory), UpdateSource.getUpdateDetails(), platform getCurrentVersion() → String + Swift CFBundleShortVersionString (SEM-04, SEM-05, SEM-06)
-- [ ] 09-03-PLAN.md — Rewrite checkForUpdate() with semver logic, update barrel exports, update all tests (SEM-07, SEM-08)
+- [x] 09-02-PLAN.md — UpdateInfo semver restructure (remove buildNumber/isMandatory), UpdateSource.getUpdateDetails(), platform getCurrentVersion() → String + Swift CFBundleShortVersionString (SEM-04, SEM-05, SEM-06)
+- [x] 09-03-PLAN.md — Rewrite checkForUpdate() with semver logic, update barrel exports, update all tests (SEM-07, SEM-08)
 - [ ] 09-04-PLAN.md — Example app 3-way result demo, CHANGELOG v2.2.0 migration guide, README update, version bump (SEM-09, SEM-10)
