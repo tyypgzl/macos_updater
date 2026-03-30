@@ -5,34 +5,27 @@ import 'package:macos_updater/src/models/file_hash.dart';
 // in copyWith for nullable fields.
 const Object _sentinel = Object();
 
-/// Metadata about an available update, returned by the UpdateSource.
+/// Metadata about an available update, produced by the engine after
+/// comparing local and remote versions.
 ///
-/// [version] is a human-readable display string (e.g. "2.1.0") — not used
-/// for comparison. [buildNumber] is the integer used for version comparison:
-/// remote.buildNumber > local means an update is available.
-///
-/// [changedFiles] is populated by the engine after diffing local vs remote
-/// hashes. It represents only the files that need to be downloaded.
+/// [version] is the semver string used for version comparison
+/// (e.g. '1.0.2'). [changedFiles] is populated by the engine after
+/// diffing local vs remote Blake2b hashes — it represents only the
+/// files that need to be downloaded.
 @immutable
 final class UpdateInfo {
   /// Creates an [UpdateInfo] with the given version metadata and changed files.
   const UpdateInfo({
     required this.version,
-    required this.buildNumber,
     required this.remoteBaseUrl,
     required this.changedFiles,
-    this.isMandatory = false,
-    this.minBuildNumber,
+    this.minimumVersion,
     this.releaseNotes,
   });
 
-  /// Human-readable version string, for display only.
+  /// Semver version string (e.g. '1.0.2'). Used by the engine for
+  /// version comparison.
   final String version;
-
-  /// Integer build number used for version comparison.
-  /// A remote [buildNumber] greater than the local value
-  /// means an update exists.
-  final int buildNumber;
 
   /// Base URL where update files are hosted. Used by the engine to
   /// construct per-file download URLs.
@@ -42,19 +35,9 @@ final class UpdateInfo {
   /// Populated by the engine; consumers pass this to the download function.
   final List<FileHash> changedFiles;
 
-  /// Whether the update is mandatory and the user cannot skip it.
-  ///
-  /// Set by the engine when [minBuildNumber] is non-null and the local
-  /// build is below that threshold. Consumers may also set this directly
-  /// from their backend data. Defaults to `false`.
-  final bool isMandatory;
-
-  /// The minimum build number that clients must be running to continue.
-  ///
-  /// When the engine detects that the local build number is less than this
-  /// value, it sets [isMandatory] to `true` on the returned update info.
-  /// `null` means no minimum threshold is enforced.
-  final int? minBuildNumber;
+  /// Minimum semver string clients must run. Clients below this threshold
+  /// receive a force-update result. `null` means no minimum is enforced.
+  final String? minimumVersion;
 
   /// Human-readable release notes for this update, for display only.
   ///
@@ -63,27 +46,23 @@ final class UpdateInfo {
 
   /// Returns a copy of this [UpdateInfo] with the specified fields replaced.
   ///
-  /// For nullable fields ([minBuildNumber], [releaseNotes]), passing `null`
+  /// For nullable fields ([minimumVersion], [releaseNotes]), passing `null`
   /// explicitly will clear the field. Omitting the parameter leaves the
   /// existing value unchanged.
   UpdateInfo copyWith({
     String? version,
-    int? buildNumber,
     String? remoteBaseUrl,
     List<FileHash>? changedFiles,
-    bool? isMandatory,
-    Object? minBuildNumber = _sentinel,
+    Object? minimumVersion = _sentinel,
     Object? releaseNotes = _sentinel,
   }) {
     return UpdateInfo(
       version: version ?? this.version,
-      buildNumber: buildNumber ?? this.buildNumber,
       remoteBaseUrl: remoteBaseUrl ?? this.remoteBaseUrl,
       changedFiles: changedFiles ?? this.changedFiles,
-      isMandatory: isMandatory ?? this.isMandatory,
-      minBuildNumber: identical(minBuildNumber, _sentinel)
-          ? this.minBuildNumber
-          : minBuildNumber as int?,
+      minimumVersion: identical(minimumVersion, _sentinel)
+          ? this.minimumVersion
+          : minimumVersion as String?,
       releaseNotes: identical(releaseNotes, _sentinel)
           ? this.releaseNotes
           : releaseNotes as String?,
