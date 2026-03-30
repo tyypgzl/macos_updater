@@ -25,8 +25,8 @@ class MockMacosUpdaterPlatform
   }
 
   @override
-  Future<int> getCurrentVersion() {
-    return Future.value(42);
+  Future<String> getCurrentVersion() {
+    return Future.value('1.0.0');
   }
 }
 

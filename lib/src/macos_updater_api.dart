@@ -9,60 +9,67 @@ import 'package:macos_updater/src/models/file_hash.dart';
 import 'package:macos_updater/src/models/update_info.dart';
 import 'package:macos_updater/src/models/update_progress.dart';
 import 'package:macos_updater/src/update_source.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 /// Checks whether an update is available by querying the given [source].
 ///
-/// Returns `UpToDate` when the source returns `null`
-/// or the remote build number is not greater than the installed build.
+/// Returns [UpToDate] when the source returns `null`, when the macOS
+/// platform details are absent, when the platform is inactive, or when
+/// the installed version is already at or ahead of the latest version.
 ///
-/// Returns `UpdateAvailable` with a populated `UpdateInfo.changedFiles`
-/// list (diff of local vs remote SHA-256 hashes) when the remote build
-/// number exceeds the locally installed build number. The returned
-/// `UpdateInfo.isMandatory` is set to `true` when [UpdateInfo.minBuildNumber]
-/// is non-null and the local build is below that threshold, or when the source
-/// already provided `isMandatory: true` (OR logic, D-22 / D-23).
+/// Returns [ForceUpdateRequired] when the installed version is below the
+/// minimum required version declared in the platform config.
+///
+/// Returns [OptionalUpdateAvailable] when the installed version is at or
+/// above the minimum but below the latest version.
+///
+/// Version comparisons use `pub_semver` — all version strings must be
+/// valid semver (e.g. '1.0.2').
 ///
 /// Any exception thrown by the source is caught and wrapped in a
-/// `NetworkError` — no raw exception escapes this function.
+/// [NetworkError] — no raw exception escapes this function.
 ///
-/// Pass [localHashesPath] to override `Platform.resolvedExecutable` for the
-/// local file-hash scan — used in tests to point at a temp directory instead
-/// of the real app bundle.
+/// Pass [localHashesPath] to override `Platform.resolvedExecutable` for
+/// the local file-hash scan — used in tests to point at a temp directory
+/// instead of the real app bundle.
 Future<UpdateCheckResult> checkForUpdate(
   UpdateSource source, {
   String? localHashesPath,
 }) async {
   try {
-    final remoteInfo = await source.getLatestUpdateInfo();
-    if (remoteInfo == null) {
-      return const UpToDate();
-    }
+    final details = await source.getUpdateDetails();
+    if (details == null) return const UpToDate();
 
-    final localBuild =
+    final platformDetails = details.macos;
+    if (platformDetails == null) return const UpToDate();
+    if (!platformDetails.active) return const UpToDate();
+
+    final currentVersionStr =
         await MacosUpdaterPlatform.instance.getCurrentVersion();
-    if (remoteInfo.buildNumber <= localBuild) {
-      return const UpToDate();
-    }
+    final currentVersion = Version.parse(currentVersionStr);
+    final minimumVersion = Version.parse(platformDetails.minimum);
+    final latestVersion = Version.parse(platformDetails.latest);
+
+    if (currentVersion >= latestVersion) return const UpToDate();
 
     final localHashes =
         await hasher.generateLocalFileHashes(path: localHashesPath);
-    final remoteHashes =
-        await source.getRemoteFileHashes(remoteInfo.remoteBaseUrl);
+    final remoteHashes = await source.getRemoteFileHashes(
+      details.remoteBaseUrl ?? '',
+    );
     final changedFiles = hasher.diffFileHashes(localHashes, remoteHashes);
 
-    // D-22: engine sets isMandatory=true when localBuild < minBuildNumber.
-    // D-23: if source already set isMandatory=true, preserve it (OR logic).
-    final isMandatory =
-        remoteInfo.isMandatory ||
-        (remoteInfo.minBuildNumber != null &&
-            localBuild < remoteInfo.minBuildNumber!);
-
-    return UpdateAvailable(
-      remoteInfo.copyWith(
-        changedFiles: changedFiles,
-        isMandatory: isMandatory,
-      ),
+    final info = UpdateInfo(
+      version: platformDetails.latest,
+      remoteBaseUrl: details.remoteBaseUrl ?? '',
+      changedFiles: changedFiles,
+      minimumVersion: platformDetails.minimum,
     );
+
+    if (currentVersion < minimumVersion) {
+      return ForceUpdateRequired(info);
+    }
+    return OptionalUpdateAvailable(info);
   } catch (e) {
     throw NetworkError(
       message: 'checkForUpdate failed: $e',
@@ -106,7 +113,7 @@ Future<void> downloadUpdate(
 /// Delegates to the platform interface's `restartApp`, which
 /// invokes the native platform restart sequence.
 ///
-/// Throws `RestartFailed` if the platform call throws any exception.
+/// Throws [RestartFailed] if the platform call throws any exception.
 Future<void> applyUpdate() async {
   try {
     await MacosUpdaterPlatform.instance.restartApp();
