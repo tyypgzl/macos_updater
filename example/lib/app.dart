@@ -12,52 +12,47 @@ import 'package:macos_updater/macos_updater.dart';
 /// Replace the URLs with your own server.
 class JsonUpdateSource implements UpdateSource {
   /// Creates a [JsonUpdateSource] with the given
-  /// [appArchiveUrl].
-  const JsonUpdateSource({required this.appArchiveUrl});
+  /// [updateDetailsUrl] and [remoteBaseUrl].
+  const JsonUpdateSource({
+    required this.updateDetailsUrl,
+    required this.remoteBaseUrl,
+  });
 
-  /// URL to the app-archive JSON file.
-  final String appArchiveUrl;
+  /// URL to the update details JSON file.
+  final String updateDetailsUrl;
+
+  /// Base URL where update files are hosted.
+  final String remoteBaseUrl;
 
   @override
-  Future<UpdateInfo?> getLatestUpdateInfo() async {
+  Future<UpdateDetails?> getUpdateDetails() async {
     final response = await http.get(
-      Uri.parse(appArchiveUrl),
+      Uri.parse(updateDetailsUrl),
     );
     if (response.statusCode != 200) return null;
 
     final json =
         jsonDecode(response.body) as Map<String, dynamic>;
-    final items = json['items'] as List<dynamic>;
+    final macosJson =
+        json['macos'] as Map<String, dynamic>?;
+    if (macosJson == null) return null;
 
-    // Find the macOS entry with the highest
-    // shortVersion
-    final macEntries = items
-        .cast<Map<String, dynamic>>()
-        .where((e) => e['platform'] == 'macos');
-    if (macEntries.isEmpty) return null;
-
-    final latest = macEntries.reduce(
-      (a, b) =>
-          (a['shortVersion'] as int) >
-                  (b['shortVersion'] as int)
-              ? a
-              : b,
-    );
-
-    return UpdateInfo(
-      version: latest['version'] as String,
-      buildNumber: latest['shortVersion'] as int,
-      remoteBaseUrl: latest['url'] as String,
-      changedFiles: const [],
+    return UpdateDetails(
+      macos: PlatformUpdateDetails(
+        minimum: macosJson['minimum'] as String,
+        latest: macosJson['latest'] as String,
+        active: macosJson['active'] as bool,
+      ),
+      remoteBaseUrl: remoteBaseUrl,
     );
   }
 
   @override
   Future<List<FileHash>> getRemoteFileHashes(
-    String remoteBaseUrl,
+    String baseUrl,
   ) async {
     final response = await http.get(
-      Uri.parse('$remoteBaseUrl/hashes.json'),
+      Uri.parse('$baseUrl/hashes.json'),
     );
     final list =
         jsonDecode(response.body) as List<dynamic>;
@@ -86,8 +81,9 @@ class UpdateExamplePage extends StatefulWidget {
 class _UpdateExamplePageState
     extends State<UpdateExamplePage> {
   final _source = const JsonUpdateSource(
-    appArchiveUrl:
-        'https://example.com/app-archive.json',
+    updateDetailsUrl:
+        'https://example.com/update-details.json',
+    remoteBaseUrl: 'https://example.com/updates',
   );
 
   String _status = 'Tap "Check" to start.';
@@ -104,14 +100,20 @@ class _UpdateExamplePageState
       switch (result) {
         case UpToDate():
           setState(() => _status = 'Up to date!');
-        case UpdateAvailable(:final info):
+        case ForceUpdateRequired(:final info):
           setState(() {
             _updateInfo = info;
-            _isMandatory = info.isMandatory;
-            _status = info.isMandatory
-                ? 'REQUIRED update: ${info.version} — must install'
-                : 'Update available: ${info.version} '
-                    '(${info.changedFiles.length} files)';
+            _isMandatory = true;
+            _status =
+                'REQUIRED update: ${info.version} — must install';
+          });
+        case OptionalUpdateAvailable(:final info):
+          setState(() {
+            _updateInfo = info;
+            _isMandatory = false;
+            _status =
+                'Update available: ${info.version} '
+                '(${info.changedFiles.length} files)';
           });
       }
     } on UpdateError catch (e) {
