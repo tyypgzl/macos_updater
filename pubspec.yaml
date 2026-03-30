@@ -1,6 +1,6 @@
 name: macos_updater
 description: "A headless Flutter plugin for macOS desktop OTA updates. Downloads only changed files via SHA-256 delta diffing. Bring your own backend via the abstract UpdateSource interface."
-version: 2.0.0
+version: 2.2.0
 homepage: https://github.com/tyypgzl/macos_updater
 repository: https://github.com/tyypgzl/macos_updater
 

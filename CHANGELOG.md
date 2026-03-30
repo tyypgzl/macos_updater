@@ -1,3 +1,93 @@
+## 2.2.0
+
+**Breaking changes** — semver version model replaces integer build numbers.
+
+### Migration from 2.1.0
+
+#### UpdateSource
+
+Before:
+
+```dart
+class MyUpdateSource implements UpdateSource {
+  @override
+  Future<UpdateInfo?> getLatestUpdateInfo() async {
+    return UpdateInfo(
+      version: '2.0.0',
+      buildNumber: 200,
+      remoteBaseUrl: 'https://example.com/updates',
+      changedFiles: const [],
+      minBuildNumber: 150,
+    );
+  }
+}
+```
+
+After:
+
+```dart
+class MyUpdateSource implements UpdateSource {
+  @override
+  Future<UpdateDetails?> getUpdateDetails() async {
+    return UpdateDetails(
+      macos: const PlatformUpdateDetails(
+        minimum: '1.5.0',
+        latest: '2.0.0',
+        active: true,
+      ),
+      remoteBaseUrl: 'https://example.com/updates',
+    );
+  }
+}
+```
+
+#### UpdateCheckResult switch
+
+Before (2-way):
+
+```dart
+switch (result) {
+  case UpToDate(): ...
+  case UpdateAvailable(:final info):
+    if (info.isMandatory) { /* force */ }
+    else { /* optional */ }
+}
+```
+
+After (3-way):
+
+```dart
+switch (result) {
+  case UpToDate(): ...
+  case ForceUpdateRequired(:final info): ...  // was isMandatory=true
+  case OptionalUpdateAvailable(:final info): ... // was isMandatory=false
+}
+```
+
+#### Removed fields
+
+| Removed | Replacement |
+|---------|-------------|
+| `UpdateInfo.buildNumber` (int) | `UpdateInfo.version` (semver String) |
+| `UpdateInfo.minBuildNumber` (int?) | `UpdateInfo.minimumVersion` (String?) |
+| `UpdateInfo.isMandatory` (bool) | Separate result types |
+| `UpdateSource.getLatestUpdateInfo()` | `UpdateSource.getUpdateDetails()` |
+| `UpdateCheckResult.UpdateAvailable` | `ForceUpdateRequired` or `OptionalUpdateAvailable` |
+
+### New types
+
+- `PlatformUpdateDetails` — platform-specific config: `{ minimum, latest, active }`
+- `UpdateDetails` — wraps platform configs: `{ macos: PlatformUpdateDetails?, remoteBaseUrl: String? }`
+- `ForceUpdateRequired(UpdateInfo)` — current version is below minimum
+- `OptionalUpdateAvailable(UpdateInfo)` — update available, current version is valid
+
+### Version comparison
+
+The engine now uses `pub_semver` for all comparisons:
+- `currentVersion < minimum` — `ForceUpdateRequired`
+- `minimum <= currentVersion < latest` — `OptionalUpdateAvailable`
+- `currentVersion >= latest` — `UpToDate`
+
 ## 2.1.0
 
 ### New features

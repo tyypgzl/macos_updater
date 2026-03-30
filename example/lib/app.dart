@@ -90,8 +90,8 @@ class _UpdateExamplePageState
   double _progress = 0;
   UpdateInfo? _updateInfo;
 
-  /// Whether the pending update is mandatory (cannot be skipped).
-  bool _isMandatory = false;
+  /// Whether the pending update requires a forced install (cannot be skipped).
+  bool _isForceRequired = false;
 
   Future<void> _checkForUpdate() async {
     setState(() => _status = 'Checking...');
@@ -103,14 +103,14 @@ class _UpdateExamplePageState
         case ForceUpdateRequired(:final info):
           setState(() {
             _updateInfo = info;
-            _isMandatory = true;
+            _isForceRequired = true;
             _status =
                 'REQUIRED update: ${info.version} — must install';
           });
         case OptionalUpdateAvailable(:final info):
           setState(() {
             _updateInfo = info;
-            _isMandatory = false;
+            _isForceRequired = false;
             _status =
                 'Update available: ${info.version} '
                 '(${info.changedFiles.length} files)';
@@ -173,7 +173,7 @@ class _UpdateExamplePageState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (_isMandatory && _updateInfo != null)
+              if (_isForceRequired && _updateInfo != null)
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
