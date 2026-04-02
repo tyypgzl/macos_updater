@@ -1,3 +1,8 @@
+## 2.2.3
+
+### Fixed
+- `FileHash.fromJson()` now supports both JSON key formats: CLI format (`path`, `calculatedHash`) and alternative format (`filePath`, `hash`). Previously crashed with `type 'Null' is not a subtype of type 'String'` when hashes.json used `filePath`/`hash` keys.
+
 ## 2.2.2
 
 ### Fixed

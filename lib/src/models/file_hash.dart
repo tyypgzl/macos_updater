@@ -17,13 +17,16 @@ final class FileHash {
     required this.length,
   });
 
-  /// Creates a [FileHash] from a JSON map produced by the CLI hashes.json.
+  /// Creates a [FileHash] from a JSON map.
   ///
-  /// Expects keys: "path", "calculatedHash", "length".
+  /// Supports two key formats:
+  /// - CLI format: `"path"`, `"calculatedHash"`, `"length"`
+  /// - Alt format: `"filePath"`, `"hash"`, `"length"`
   factory FileHash.fromJson(Map<String, dynamic> json) {
     return FileHash(
-      filePath: json['path'] as String,
-      hash: json['calculatedHash'] as String,
+      filePath: (json['path'] ?? json['filePath']) as String,
+      hash: (json['calculatedHash'] ?? json['hash'])
+          as String,
       length: json['length'] as int,
     );
   }
