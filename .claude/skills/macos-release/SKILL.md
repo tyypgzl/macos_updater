@@ -47,23 +47,15 @@ Try the Dart archive command first:
 cd app && fvm dart run macos_updater:archive macos
 ```
 
-**Known issue:** This command may fail with Dart SDK compatibility errors (`Undefined name 'PlatformDispatcher'` etc.). If it fails, use the manual fallback:
+If it fails (e.g. Dart SDK compatibility errors), use the shell script fallback:
 
 ```bash
-cd app
-APP_PATH="dist/{buildNumber}/appshot-{version}+{buildNumber}-macos/appshot.app/Contents"
-OUT_DIR="dist/{buildNumber}/{version}+{buildNumber}-macos"
-mkdir -p "$OUT_DIR"
-cp -R "$APP_PATH/"* "$OUT_DIR/"
-cd "$OUT_DIR"
-find . -type f ! -name 'hashes.json' | sort | while read -r file; do
-  rel="${file#./}"
-  hash=$(shasum -a 256 "$file" | cut -d' ' -f1)
-  size=$(stat -f%z "$file")
-  echo "{\"path\":\"$rel\",\"hash\":\"$hash\",\"length\":$size}"
-done | jq -s '.' > hashes.json
-echo "Generated hashes.json with $(jq length hashes.json) entries"
+bash .claude/skills/macos-release/scripts/generate_hashes.sh <version> <buildNumber>
 ```
+
+Example: `bash .claude/skills/macos-release/scripts/generate_hashes.sh 1.0.0 1`
+
+**Important:** Do NOT generate hashes manually with `shasum`. The hashes must be **base64-encoded SHA-256** (not hex) and use the `filePath` JSON key to match the Dart runtime. The shell script handles this correctly.
 
 Output: `app/dist/{buildNumber}/{version}+{buildNumber}-macos/` containing all `.app/Contents/` files + `hashes.json`
 

@@ -10,7 +10,7 @@ const Object _sentinel = Object();
 ///
 /// [version] is the semver string used for version comparison
 /// (e.g. '1.0.2'). [changedFiles] is populated by the engine after
-/// diffing local vs remote Blake2b hashes — it represents only the
+/// diffing local vs remote SHA-256 hashes — it represents only the
 /// files that need to be downloaded.
 @immutable
 final class UpdateInfo {
