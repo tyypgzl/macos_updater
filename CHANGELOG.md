@@ -1,3 +1,8 @@
+## 2.2.2
+
+### Fixed
+- Fixed `type 'Null' is not a subtype of type 'String'` crash when `CFBundleShortVersionString` is not set in Info.plist. Now returns `'0.0.0'` as fallback instead of crashing.
+
 ## 2.2.1
 
 ### Added
