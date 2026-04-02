@@ -32,11 +32,26 @@ RELEASE_ENTITLEMENTS="$APP_DIR/macos/Runner/Release.entitlements"
 
 cd "$APP_DIR"
 
+# ── 0. Resolve Flutter SDK ───────────────────────────────────────
+if [ -f ".fvmrc" ] || [ -f "../.fvmrc" ]; then
+  FVM_SDK="$(cd .fvm/flutter_sdk 2>/dev/null && pwd)" || FVM_SDK="$(cd ../.fvm/flutter_sdk 2>/dev/null && pwd)"
+  FLUTTER_BIN="$FVM_SDK/bin/flutter"
+  echo "Using FVM SDK: $FVM_SDK"
+else
+  FLUTTER_BIN="flutter"
+  echo "Using system SDK: $(which flutter)"
+fi
+
+if ! command -v "$FLUTTER_BIN" &>/dev/null && [ ! -x "$FLUTTER_BIN" ]; then
+  echo "Error: Flutter SDK not found. Install Flutter or set up FVM."
+  exit 1
+fi
+
 # ── 1. Flutter build (obfuscated) ─────────────────────────────
 echo "=== Flutter Build (obfuscated) ==="
 DEBUG_SYMBOLS_DIR="$DIST_DIR/${BUILD_NUMBER}/debug-symbols"
 mkdir -p "$DEBUG_SYMBOLS_DIR"
-fvm flutter build macos --release --obfuscate --split-debug-info="$DEBUG_SYMBOLS_DIR" 2>&1 | tail -2
+"$FLUTTER_BIN" build macos --release --obfuscate --split-debug-info="$DEBUG_SYMBOLS_DIR" 2>&1 | tail -2
 echo "Debug symbols saved to: $DEBUG_SYMBOLS_DIR"
 echo ""
 

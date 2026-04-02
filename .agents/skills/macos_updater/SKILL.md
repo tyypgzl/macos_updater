@@ -17,6 +17,44 @@ Files are pushed to the repo and served via `raw.githubusercontent.com` URLs.
 The `macos_updater` package downloads individual files from `remoteBaseUrl/filePath` —
 raw URLs preserve directory structure, so the package works without any custom logic.
 
+## Flutter/Dart SDK Resolution
+
+Before running any command, detect which SDK to use:
+
+1. Check if `.fvmrc` exists in the **app directory** (or project root)
+2. If `.fvmrc` exists → use `.fvm/flutter_sdk/bin/flutter` and `.fvm/flutter_sdk/bin/dart`
+3. If `.fvmrc` does NOT exist → use system `flutter` and `dart` from PATH
+
+**Resolution logic (run once at the start):**
+
+```bash
+# Detect SDK — run from the app directory
+if [ -f ".fvmrc" ] || [ -f "../.fvmrc" ]; then
+  # FVM project: resolve symlink to absolute path
+  FVM_SDK="$(cd .fvm/flutter_sdk 2>/dev/null && pwd)" || FVM_SDK="$(cd ../.fvm/flutter_sdk 2>/dev/null && pwd)"
+  FLUTTER_BIN="$FVM_SDK/bin/flutter"
+  DART_BIN="$FVM_SDK/bin/dart"
+  FLUTTER_ROOT="$FVM_SDK"
+  echo "Using FVM SDK: $FVM_SDK"
+else
+  # System SDK
+  FLUTTER_BIN="flutter"
+  DART_BIN="dart"
+  FLUTTER_ROOT="$(dirname "$(dirname "$(which flutter)")")"
+  echo "Using system SDK: $(which flutter)"
+fi
+
+# Verify SDK is available
+if ! command -v "$FLUTTER_BIN" &>/dev/null && [ ! -x "$FLUTTER_BIN" ]; then
+  echo "Error: Flutter SDK not found. Install Flutter or set up FVM."
+  echo "  System install: https://docs.flutter.dev/get-started/install"
+  echo "  FVM: https://fvm.app/documentation/getting-started/installation"
+  exit 1
+fi
+```
+
+Then use `$FLUTTER_BIN`, `$DART_BIN`, and `$FLUTTER_ROOT` throughout the release flow.
+
 ## Release Flow
 
 ### Step 1: Get Version
@@ -29,13 +67,21 @@ Update `version:` field in `app/pubspec.yaml` with the new version.
 
 ### Step 3: Build Release
 
-Run from the **project root**:
+Run from the **app directory**:
 
 ```bash
-cd app && FLUTTER_ROOT="$(cd ../.fvm/flutter_sdk && pwd)" fvm dart run macos_updater:release macos
+cd app && FLUTTER_ROOT="$FLUTTER_ROOT" $DART_BIN run macos_updater:release macos
 ```
 
-`$(cd ../.fvm/flutter_sdk && pwd)` resolves the FVM symlink to an absolute path — `readlink -f` is not available on macOS by default.
+If using FVM with `.fvmrc`:
+```bash
+cd app && FLUTTER_ROOT="$(cd ../.fvm/flutter_sdk && pwd)" .fvm/flutter_sdk/bin/dart run macos_updater:release macos
+```
+
+If using system SDK:
+```bash
+cd app && FLUTTER_ROOT="$(dirname "$(dirname "$(which flutter)")")" dart run macos_updater:release macos
+```
 
 Output: `app/dist/{buildNumber}/appshot-{version}+{buildNumber}-macos/appshot.app`
 
@@ -44,7 +90,7 @@ Output: `app/dist/{buildNumber}/appshot-{version}+{buildNumber}-macos/appshot.ap
 Try the Dart archive command first:
 
 ```bash
-cd app && fvm dart run macos_updater:archive macos
+cd app && $DART_BIN run macos_updater:archive macos
 ```
 
 If it fails (e.g. Dart SDK compatibility errors), use the shell script fallback:
