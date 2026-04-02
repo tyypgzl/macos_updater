@@ -1,5 +1,5 @@
 ---
-name: macos-release
+name: macos_updater
 description: >
   Build macOS release, generate delta update hashes, create DMG installer, and publish to GitHub.
   Use this skill whenever the user wants to build a macOS release, create a new version,
@@ -50,10 +50,10 @@ cd app && fvm dart run macos_updater:archive macos
 If it fails (e.g. Dart SDK compatibility errors), use the shell script fallback:
 
 ```bash
-bash .claude/skills/macos-release/scripts/generate_hashes.sh <version> <buildNumber>
+bash .agents/skills/macos_updater/scripts/generate_hashes.sh <version> <buildNumber>
 ```
 
-Example: `bash .claude/skills/macos-release/scripts/generate_hashes.sh 1.0.0 1`
+Example: `bash .agents/skills/macos_updater/scripts/generate_hashes.sh 1.0.0 1`
 
 **Important:** Do NOT generate hashes manually with `shasum`. The hashes must be **base64-encoded SHA-256** (not hex) and use the `filePath` JSON key to match the Dart runtime. The shell script handles this correctly.
 
@@ -64,10 +64,10 @@ Output: `app/dist/{buildNumber}/{version}+{buildNumber}-macos/` containing all `
 Run from the **project root**:
 
 ```bash
-bash .claude/skills/macos-release/scripts/upload_release.sh <version> <buildNumber>
+bash .agents/skills/macos_updater/scripts/upload_release.sh <version> <buildNumber>
 ```
 
-Example: `bash .claude/skills/macos-release/scripts/upload_release.sh 1.0.0 1`
+Example: `bash .agents/skills/macos_updater/scripts/upload_release.sh 1.0.0 1`
 
 The script:
 1. Clones `appshot-releases` to a temp dir
@@ -83,10 +83,10 @@ If files exceed GitHub's 100MB limit, the script warns. Use Git LFS in that case
 Run from the **project root**:
 
 ```bash
-bash .claude/skills/macos-release/scripts/create_dmg.sh <version> <buildNumber>
+bash .agents/skills/macos_updater/scripts/create_dmg.sh <version> <buildNumber>
 ```
 
-Example: `bash .claude/skills/macos-release/scripts/create_dmg.sh 1.0.0 1`
+Example: `bash .agents/skills/macos_updater/scripts/create_dmg.sh 1.0.0 1`
 
 The script handles the full pipeline:
 1. Flutter build (obfuscated, with debug symbols saved to `dist/{buildNumber}/debug-symbols/`)
