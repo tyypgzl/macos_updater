@@ -1,3 +1,11 @@
+## 2.2.1
+
+### Added
+- `PlatformUpdateDetails.url` — per-platform URL for update files. The engine checks `platformDetails.url` first, falling back to `UpdateDetails.remoteBaseUrl` if null.
+
+### Fixed
+- Fixed `type 'Null' is not a subtype of type 'String'` crash when `remoteBaseUrl` was null and URL was inside the platform config object.
+
 ## 2.2.0
 
 **Breaking changes** — semver version model replaces integer build numbers.

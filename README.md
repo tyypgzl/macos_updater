@@ -2,7 +2,7 @@
 
 A headless Flutter plugin for macOS desktop OTA updates. Downloads only changed files by comparing SHA-256 file hashes — no full app re-download needed. Bring your own backend via the abstract `UpdateSource` interface (Firebase Remote Config, REST API, S3, local file, etc.).
 
-**v2.2.0** introduces a semver version model. See [CHANGELOG.md](CHANGELOG.md) for the migration guide if upgrading from v2.1.0.
+**v2.2.1** introduces per-platform URLs and semver version model. See [CHANGELOG.md](CHANGELOG.md) for the migration guide if upgrading from v2.1.0.
 
 ## Getting Started
 
@@ -10,7 +10,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  macos_updater: ^2.2.0
+  macos_updater: ^2.2.1
 ```
 
 ## Usage
@@ -38,11 +38,11 @@ class MyUpdateSource implements UpdateSource {
 
     return UpdateDetails(
       macos: PlatformUpdateDetails(
-        minimum: macosJson["minimum"] as String,   // minimum version — below this forces update
-        latest: macosJson["latest"] as String,     // latest available version
-        active: macosJson["active"] as bool,       // false disables update checking
+        minimum: macosJson["minimum"] as String,
+        latest: macosJson["latest"] as String,
+        active: macosJson["active"] as bool,
+        url: macosJson["url"] as String?,
       ),
-      remoteBaseUrl: json["remoteBaseUrl"] as String,
     );
   }
 
@@ -67,11 +67,13 @@ The JSON your server returns should look like:
   "macos": {
     "minimum": "1.0.1",
     "latest": "1.0.2",
-    "active": true
-  },
-  "remoteBaseUrl": "https://your-server.com/updates/1.0.2"
+    "active": true,
+    "url": "https://your-server.com/updates/1.0.2"
+  }
 }
 ```
+
+The `url` field is per-platform. Alternatively, you can use a top-level `remoteBaseUrl` that applies to all platforms.
 
 ### 2. Check for Updates
 
@@ -154,8 +156,8 @@ class FirebaseUpdateSource implements UpdateSource {
         minimum: config.getString("macos_minimum_version"),
         latest: latest,
         active: config.getBool("macos_update_active"),
+        url: config.getString("macos_update_base_url"),
       ),
-      remoteBaseUrl: config.getString("macos_update_base_url"),
     );
   }
 

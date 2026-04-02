@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-macOS Updater (v2.2.0) — a headless Flutter plugin for macOS desktop OTA updates. Downloads only changed files by comparing SHA-256 hashes. No built-in UI — consumers implement `UpdateSource` to connect any backend and build their own UI. Version comparison uses semantic versioning via `pub_semver`.
+macOS Updater (v2.2.1) — a headless Flutter plugin for macOS desktop OTA updates. Downloads only changed files by comparing SHA-256 hashes. No built-in UI — consumers implement `UpdateSource` to connect any backend and build their own UI. Version comparison uses semantic versioning via `pub_semver`.
 
 ## Build & Test Commands
 
@@ -83,8 +83,8 @@ Consumer's backend returns:
   "macos": {
     "minimum": "1.0.1",
     "latest": "1.0.2",
-    "active": true
-  },
-  "remoteBaseUrl": "https://server.com/updates/1.0.2"
+    "active": true,
+    "url": "https://server.com/updates/1.0.2"
+  }
 }
 ```
