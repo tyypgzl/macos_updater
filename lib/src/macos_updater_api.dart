@@ -52,16 +52,20 @@ Future<UpdateCheckResult> checkForUpdate(
 
     if (currentVersion >= latestVersion) return const UpToDate();
 
+    final remoteBaseUrl =
+        platformDetails.url ?? details.remoteBaseUrl ?? '';
+
     final localHashes =
         await hasher.generateLocalFileHashes(path: localHashesPath);
     final remoteHashes = await source.getRemoteFileHashes(
-      details.remoteBaseUrl ?? '',
+      remoteBaseUrl,
     );
-    final changedFiles = hasher.diffFileHashes(localHashes, remoteHashes);
+    final changedFiles =
+        hasher.diffFileHashes(localHashes, remoteHashes);
 
     final info = UpdateInfo(
       version: platformDetails.latest,
-      remoteBaseUrl: details.remoteBaseUrl ?? '',
+      remoteBaseUrl: remoteBaseUrl,
       changedFiles: changedFiles,
       minimumVersion: platformDetails.minimum,
     );
