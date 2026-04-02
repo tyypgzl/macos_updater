@@ -23,7 +23,17 @@ TAG="v${VERSION}"
 APP_NAME="Appshot"
 KEYCHAIN_PROFILE="appshot-notary"
 
-PROJECT_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+# Find project root by traversing up to .git
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$SCRIPT_DIR"
+while [ "$PROJECT_ROOT" != "/" ]; do
+  [ -d "$PROJECT_ROOT/.git" ] && break
+  PROJECT_ROOT="$(dirname "$PROJECT_ROOT")"
+done
+if [ "$PROJECT_ROOT" = "/" ]; then
+  echo "Error: Could not find project root (.git directory)"
+  exit 1
+fi
 APP_DIR="$PROJECT_ROOT/app"
 DIST_DIR="$APP_DIR/dist"
 EXPORT_OPTIONS="$APP_DIR/macos/ExportOptions.plist"

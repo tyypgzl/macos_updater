@@ -17,6 +17,39 @@ Files are pushed to the repo and served via `raw.githubusercontent.com` URLs.
 The `macos_updater` package downloads individual files from `remoteBaseUrl/filePath` —
 raw URLs preserve directory structure, so the package works without any custom logic.
 
+## Skill Directory
+
+This skill may live under different AI tool directories depending on the setup:
+- `.agents/skills/macos_updater/`
+- `.claude/skills/macos_updater/`
+- `.cursor/skills/macos_updater/`
+- or any other `*/skills/macos_updater/` path
+
+**Before running any script**, resolve the skill directory relative to this SKILL.md file:
+
+```bash
+# Find SKILL_DIR — search common locations from project root
+SKILL_DIR=""
+for prefix in .agents .claude .cursor; do
+  if [ -d "$prefix/skills/macos_updater/scripts" ]; then
+    SKILL_DIR="$prefix/skills/macos_updater"
+    break
+  fi
+done
+
+if [ -z "$SKILL_DIR" ]; then
+  # Fallback: find it anywhere in the repo
+  SKILL_DIR=$(find . -path "*/skills/macos_updater/scripts" -type d 2>/dev/null | head -1 | sed 's|/scripts$||; s|^\./||')
+fi
+
+if [ -z "$SKILL_DIR" ]; then
+  echo "Error: macos_updater skill directory not found"
+  exit 1
+fi
+```
+
+Then reference scripts as `$SKILL_DIR/scripts/<script>.sh` throughout.
+
 ## Flutter/Dart SDK Resolution
 
 Before running any command, detect which SDK to use:
@@ -96,10 +129,10 @@ cd app && $DART_BIN run macos_updater:archive macos
 If it fails (e.g. Dart SDK compatibility errors), use the shell script fallback:
 
 ```bash
-bash .agents/skills/macos_updater/scripts/generate_hashes.sh <version> <buildNumber>
+bash $SKILL_DIR/scripts/generate_hashes.sh <version> <buildNumber>
 ```
 
-Example: `bash .agents/skills/macos_updater/scripts/generate_hashes.sh 1.0.0 1`
+Example: `bash $SKILL_DIR/scripts/generate_hashes.sh 1.0.0 1`
 
 **Important:** Do NOT generate hashes manually with `shasum`. The hashes must be **base64-encoded SHA-256** (not hex) and use the `filePath` JSON key to match the Dart runtime. The shell script handles this correctly.
 
@@ -110,10 +143,10 @@ Output: `app/dist/{buildNumber}/{version}+{buildNumber}-macos/` containing all `
 Run from the **project root**:
 
 ```bash
-bash .agents/skills/macos_updater/scripts/upload_release.sh <version> <buildNumber>
+bash $SKILL_DIR/scripts/upload_release.sh <version> <buildNumber>
 ```
 
-Example: `bash .agents/skills/macos_updater/scripts/upload_release.sh 1.0.0 1`
+Example: `bash $SKILL_DIR/scripts/upload_release.sh 1.0.0 1`
 
 The script:
 1. Clones `appshot-releases` to a temp dir
@@ -129,10 +162,10 @@ If files exceed GitHub's 100MB limit, the script warns. Use Git LFS in that case
 Run from the **project root**:
 
 ```bash
-bash .agents/skills/macos_updater/scripts/create_dmg.sh <version> <buildNumber>
+bash $SKILL_DIR/scripts/create_dmg.sh <version> <buildNumber>
 ```
 
-Example: `bash .agents/skills/macos_updater/scripts/create_dmg.sh 1.0.0 1`
+Example: `bash $SKILL_DIR/scripts/create_dmg.sh 1.0.0 1`
 
 The script handles the full pipeline:
 1. Flutter build (obfuscated, with debug symbols saved to `dist/{buildNumber}/debug-symbols/`)
