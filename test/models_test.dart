@@ -43,8 +43,8 @@ void main() {
 
     test('fromJson reads correct JSON keys', () {
       final fh = FileHash.fromJson(const {
-        'path': 'Contents/MacOS/Runner',
-        'calculatedHash': 'sha256abc',
+        'filePath': 'Contents/MacOS/Runner',
+        'hash': 'sha256abc',
         'length': 512,
       });
       expect(fh.filePath, 'Contents/MacOS/Runner');
@@ -53,13 +53,15 @@ void main() {
     });
 
     test('toJson writes correct JSON keys', () {
-      const fh = FileHash(filePath: 'a/b/c', hash: 'h1', length: 10);
+      const fh = FileHash(
+        filePath: 'a/b/c',
+        hash: 'h1',
+        length: 10,
+      );
       final json = fh.toJson();
-      expect(json['path'], 'a/b/c');
-      expect(json['calculatedHash'], 'h1');
+      expect(json['filePath'], 'a/b/c');
+      expect(json['hash'], 'h1');
       expect(json['length'], 10);
-      expect(json.containsKey('filePath'), isFalse);
-      expect(json.containsKey('hash'), isFalse);
     });
   });
 

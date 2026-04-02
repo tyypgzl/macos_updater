@@ -253,7 +253,7 @@ await downloadUpdate(
 |------|-------------|
 | `UpdateSource` | Abstract interface — implement to connect your backend |
 | `UpdateDetails` | Version config returned by `getUpdateDetails()`: wraps per-platform `PlatformUpdateDetails` |
-| `PlatformUpdateDetails` | Per-platform config: `minimum` (String), `latest` (String), `active` (bool) |
+| `PlatformUpdateDetails` | Per-platform config: `minimum`, `latest`, `active`, `url` |
 | `UpdateInfo` | Version metadata populated by engine: `version`, `minimumVersion`, `remoteBaseUrl`, `changedFiles` |
 | `FileHash` | File path + SHA-256 hash + file length |
 | `UpdateProgress` | Download progress: `totalBytes`, `receivedBytes`, `currentFile`, `totalFiles`, `completedFiles` |
@@ -273,6 +273,15 @@ dart run macos_updater:archive macos
 ```
 
 This creates a `dist/{version}-macos/` folder with your app files and a `hashes.json` manifest. Upload this folder to your server — the engine downloads individual files from it.
+
+### hashes.json Format
+
+```json
+[
+  { "filePath": "MacOS/Runner", "hash": "base64...", "length": 12345 },
+  { "filePath": "Frameworks/App.framework/...", "hash": "...", "length": 456 }
+]
+```
 
 ## How Delta Updates Work
 

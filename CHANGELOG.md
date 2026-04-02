@@ -1,3 +1,12 @@
+## 2.3.0
+
+### Breaking
+- **hashes.json format standardized**: JSON keys are now `filePath`, `hash`, `length` (previously `path`, `calculatedHash`, `length`). Regenerate your hashes.json with `dart run macos_updater:archive macos`.
+
+### Changed
+- `FileHash.fromJson()` and `toJson()` use consistent keys matching Dart field names
+- Removed dual-format fallback — single format, single source of truth
+
 ## 2.2.3
 
 ### Fixed

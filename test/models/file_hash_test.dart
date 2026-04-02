@@ -1,12 +1,12 @@
-import "package:macos_updater/src/models/file_hash.dart";
 import "package:flutter_test/flutter_test.dart";
+import "package:macos_updater/src/models/file_hash.dart";
 
 void main() {
   group("FileHash", () {
     test("fromJson maps JSON keys correctly", () {
       final json = {
-        "path": "foo/bar.dylib",
-        "calculatedHash": "abc123",
+        "filePath": "foo/bar.dylib",
+        "hash": "abc123",
         "length": 1024,
       };
       final fileHash = FileHash.fromJson(json);
@@ -22,24 +22,35 @@ void main() {
         length: 1024,
       );
       final json = fileHash.toJson();
-      expect(json["path"], equals("foo/bar.dylib"));
-      expect(json["calculatedHash"], equals("abc123"));
+      expect(json["filePath"], equals("foo/bar.dylib"));
+      expect(json["hash"], equals("abc123"));
       expect(json["length"], equals(1024));
     });
 
-    test("round-trip: fromJson(toJson()) produces structurally equal instance", () {
-      const original = FileHash(
-        filePath: "Contents/MacOS/MyApp",
-        hash: "deadbeef",
-        length: 42,
-      );
-      final roundTripped = FileHash.fromJson(original.toJson());
-      expect(roundTripped.filePath, equals(original.filePath));
-      expect(roundTripped.hash, equals(original.hash));
-      expect(roundTripped.length, equals(original.length));
-    });
+    test(
+      "round-trip: fromJson(toJson()) preserves all fields",
+      () {
+        const original = FileHash(
+          filePath: "Contents/MacOS/MyApp",
+          hash: "deadbeef",
+          length: 42,
+        );
+        final roundTripped =
+            FileHash.fromJson(original.toJson());
+        expect(
+          roundTripped.filePath,
+          equals(original.filePath),
+        );
+        expect(roundTripped.hash, equals(original.hash));
+        expect(
+          roundTripped.length,
+          equals(original.length),
+        );
+      },
+    );
 
-    test("copyWith with no arguments returns identical fields", () {
+    test("copyWith with no arguments returns identical fields",
+        () {
       const original = FileHash(
         filePath: "path/to/file",
         hash: "hashvalue",
