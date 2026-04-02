@@ -34,6 +34,9 @@ class MethodChannelMacosUpdater extends MacosUpdaterPlatform {
   Future<String> getCurrentVersion() async {
     final version =
         await methodChannel.invokeMethod<String>('getCurrentVersion');
-    return version!;
+    if (version == null || version.isEmpty) {
+      return '0.0.0';
+    }
+    return version;
   }
 }
