@@ -198,16 +198,54 @@ try {
 }
 ```
 
+## Debugging
+
+Enable logging to see each step of the update check:
+
+```dart
+final result = await checkForUpdate(
+  source,
+  enableLogging: true,
+);
+```
+
+Logs are emitted via `dart:developer` with the name `macos_updater` and visible in DevTools / console:
+
+```
+[macos_updater] → getUpdateDetails()
+[macos_updater] ← details: ..., macos: ..., remoteBaseUrl: ...
+[macos_updater]   platform: minimum=1.0.1, latest=1.0.3, active=true, url=https://...
+[macos_updater] → getCurrentVersion()
+[macos_updater] ← currentVersion: "1.0.0"
+[macos_updater]   parsed: current=1.0.0, minimum=1.0.1, latest=1.0.3
+[macos_updater] → generateLocalFileHashes()
+[macos_updater] ← 42 local hashes
+[macos_updater] → getRemoteFileHashes()
+[macos_updater] ← 45 remote hashes
+[macos_updater]   3 files changed
+[macos_updater] ⚠ current < minimum → ForceUpdateRequired
+```
+
+`downloadUpdate` also supports `enableLogging`:
+
+```dart
+await downloadUpdate(
+  info,
+  enableLogging: true,
+  onProgress: (p) => print(p.completedFiles),
+);
+```
+
 ## API Reference
 
 ### Functions
 
 | Function | Description |
 |----------|-------------|
-| `checkForUpdate(UpdateSource source)` | Returns `UpToDate`, `ForceUpdateRequired(info)`, or `OptionalUpdateAvailable(info)` |
-| `downloadUpdate(UpdateInfo info, {onProgress})` | Downloads only changed files with progress callback |
+| `checkForUpdate(source, {enableLogging})` | Returns `UpToDate`, `ForceUpdateRequired(info)`, or `OptionalUpdateAvailable(info)` |
+| `downloadUpdate(info, {onProgress, enableLogging})` | Downloads only changed files with progress callback |
 | `applyUpdate()` | Restarts the app to apply the downloaded update |
-| `generateLocalFileHashes({String? path})` | Computes SHA-256 hashes for the running app bundle |
+| `generateLocalFileHashes({path})` | Computes SHA-256 hashes for the running app bundle |
 
 ### Types
 

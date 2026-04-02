@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:macos_updater/macos_updater_platform_interface.dart';
@@ -11,57 +12,127 @@ import 'package:macos_updater/src/models/update_progress.dart';
 import 'package:macos_updater/src/update_source.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-/// Checks whether an update is available by querying the given [source].
+void _log(String message, {bool enabled = false}) {
+  if (enabled) {
+    developer.log(message, name: 'macos_updater');
+  }
+}
+
+/// Checks whether an update is available by querying
+/// the given [source].
 ///
-/// Returns [UpToDate] when the source returns `null`, when the macOS
-/// platform details are absent, when the platform is inactive, or when
-/// the installed version is already at or ahead of the latest version.
+/// Returns [UpToDate] when the source returns `null`,
+/// when the macOS platform details are absent, when
+/// the platform is inactive, or when the installed
+/// version is already at or ahead of the latest.
 ///
-/// Returns [ForceUpdateRequired] when the installed version is below the
-/// minimum required version declared in the platform config.
+/// Returns [ForceUpdateRequired] when the installed
+/// version is below the minimum required version.
 ///
-/// Returns [OptionalUpdateAvailable] when the installed version is at or
-/// above the minimum but below the latest version.
+/// Returns [OptionalUpdateAvailable] when the installed
+/// version is at or above the minimum but below latest.
 ///
-/// Version comparisons use `pub_semver` — all version strings must be
-/// valid semver (e.g. '1.0.2').
+/// Set [enableLogging] to `true` to log each step
+/// via `dart:developer` (visible in DevTools / console).
 ///
-/// Any exception thrown by the source is caught and wrapped in a
-/// [NetworkError] — no raw exception escapes this function.
-///
-/// Pass [localHashesPath] to override `Platform.resolvedExecutable` for
-/// the local file-hash scan — used in tests to point at a temp directory
-/// instead of the real app bundle.
+/// Pass [localHashesPath] to override
+/// `Platform.resolvedExecutable` for tests.
 Future<UpdateCheckResult> checkForUpdate(
   UpdateSource source, {
   String? localHashesPath,
+  bool enableLogging = false,
 }) async {
   try {
+    _log('→ getUpdateDetails()', enabled: enableLogging);
     final details = await source.getUpdateDetails();
-    if (details == null) return const UpToDate();
+    _log(
+      '← details: $details, '
+      'macos: ${details?.macos}, '
+      'remoteBaseUrl: ${details?.remoteBaseUrl}',
+      enabled: enableLogging,
+    );
+
+    if (details == null) {
+      _log('✗ details is null → UpToDate', enabled: enableLogging);
+      return const UpToDate();
+    }
 
     final platformDetails = details.macos;
-    if (platformDetails == null) return const UpToDate();
-    if (!platformDetails.active) return const UpToDate();
+    if (platformDetails == null) {
+      _log('✗ macos is null → UpToDate', enabled: enableLogging);
+      return const UpToDate();
+    }
 
+    _log(
+      '  platform: minimum=${platformDetails.minimum}, '
+      'latest=${platformDetails.latest}, '
+      'active=${platformDetails.active}, '
+      'url=${platformDetails.url}',
+      enabled: enableLogging,
+    );
+
+    if (!platformDetails.active) {
+      _log('✗ not active → UpToDate', enabled: enableLogging);
+      return const UpToDate();
+    }
+
+    _log('→ getCurrentVersion()', enabled: enableLogging);
     final currentVersionStr =
         await MacosUpdaterPlatform.instance.getCurrentVersion();
-    final currentVersion = Version.parse(currentVersionStr);
-    final minimumVersion = Version.parse(platformDetails.minimum);
-    final latestVersion = Version.parse(platformDetails.latest);
+    _log(
+      '← currentVersion: "$currentVersionStr"',
+      enabled: enableLogging,
+    );
 
-    if (currentVersion >= latestVersion) return const UpToDate();
+    final currentVersion = Version.parse(currentVersionStr);
+    final minimumVersion =
+        Version.parse(platformDetails.minimum);
+    final latestVersion =
+        Version.parse(platformDetails.latest);
+
+    _log(
+      '  parsed: current=$currentVersion, '
+      'minimum=$minimumVersion, '
+      'latest=$latestVersion',
+      enabled: enableLogging,
+    );
+
+    if (currentVersion >= latestVersion) {
+      _log('✓ current >= latest → UpToDate', enabled: enableLogging);
+      return const UpToDate();
+    }
 
     final remoteBaseUrl =
         platformDetails.url ?? details.remoteBaseUrl ?? '';
+    _log(
+      '  remoteBaseUrl: "$remoteBaseUrl"',
+      enabled: enableLogging,
+    );
 
-    final localHashes =
-        await hasher.generateLocalFileHashes(path: localHashesPath);
+    _log('→ generateLocalFileHashes()', enabled: enableLogging);
+    final localHashes = await hasher.generateLocalFileHashes(
+      path: localHashesPath,
+    );
+    _log(
+      '← ${localHashes.length} local hashes',
+      enabled: enableLogging,
+    );
+
+    _log('→ getRemoteFileHashes()', enabled: enableLogging);
     final remoteHashes = await source.getRemoteFileHashes(
       remoteBaseUrl,
     );
+    _log(
+      '← ${remoteHashes.length} remote hashes',
+      enabled: enableLogging,
+    );
+
     final changedFiles =
         hasher.diffFileHashes(localHashes, remoteHashes);
+    _log(
+      '  ${changedFiles.length} files changed',
+      enabled: enableLogging,
+    );
 
     final info = UpdateInfo(
       version: platformDetails.latest,
@@ -71,10 +142,23 @@ Future<UpdateCheckResult> checkForUpdate(
     );
 
     if (currentVersion < minimumVersion) {
+      _log(
+        '⚠ current < minimum → ForceUpdateRequired',
+        enabled: enableLogging,
+      );
       return ForceUpdateRequired(info);
     }
+
+    _log(
+      '↑ OptionalUpdateAvailable',
+      enabled: enableLogging,
+    );
     return OptionalUpdateAvailable(info);
-  } catch (e) {
+  } catch (e, st) {
+    _log(
+      '✗ ERROR: $e\n$st',
+      enabled: enableLogging,
+    );
     throw NetworkError(
       message: 'checkForUpdate failed: $e',
       cause: e,
@@ -82,24 +166,26 @@ Future<UpdateCheckResult> checkForUpdate(
   }
 }
 
-/// Downloads the changed files described in [info] from the remote server.
+/// Downloads the changed files described in [info].
 ///
-/// Streams download progress events to [onProgress] as each chunk arrives.
-/// When the `changedFiles` list in [info] is empty, the future
-/// completes immediately
-/// without invoking [onProgress].
+/// Streams progress events to [onProgress].
+/// When `changedFiles` is empty, completes immediately.
 ///
-/// Files are staged in the app's update directory, which is resolved
-/// relative to `Platform.resolvedExecutable`. On macOS this is
-/// `MyApp.app/Contents/update/`.
-///
-/// Stream errors (e.g. `NetworkError`, `HashMismatch`) are re-thrown as
-/// exceptions so the caller can handle them uniformly via try/catch.
+/// Set [enableLogging] to `true` to log progress.
 Future<void> downloadUpdate(
   UpdateInfo info, {
   void Function(UpdateProgress)? onProgress,
+  bool enableLogging = false,
 }) async {
-  final appDir = File(Platform.resolvedExecutable).parent.parent.path;
+  final appDir =
+      File(Platform.resolvedExecutable).parent.parent.path;
+
+  _log(
+    '→ downloadFiles: '
+    '${info.changedFiles.length} files, '
+    'appDir=$appDir',
+    enabled: enableLogging,
+  );
 
   final stream = downloadFiles(
     remoteBaseUrl: info.remoteBaseUrl,
@@ -108,16 +194,20 @@ Future<void> downloadUpdate(
   );
 
   await for (final progress in stream) {
+    _log(
+      '  ${progress.completedFiles}/${progress.totalFiles} '
+      '${progress.currentFile}',
+      enabled: enableLogging,
+    );
     onProgress?.call(progress);
   }
+
+  _log('✓ download complete', enabled: enableLogging);
 }
 
 /// Restarts the app to apply the downloaded update.
 ///
-/// Delegates to the platform interface's `restartApp`, which
-/// invokes the native platform restart sequence.
-///
-/// Throws [RestartFailed] if the platform call throws any exception.
+/// Throws [RestartFailed] if the platform call throws.
 Future<void> applyUpdate() async {
   try {
     await MacosUpdaterPlatform.instance.restartApp();
@@ -129,12 +219,15 @@ Future<void> applyUpdate() async {
   }
 }
 
-/// Computes SHA-256 hashes for all files in the running app bundle.
+/// Computes SHA-256 hashes for all files in the running
+/// app bundle.
 ///
-/// Pass [path] to override `Platform.resolvedExecutable` — used in tests
-/// to point at a temp directory instead of the real app bundle.
+/// Pass [path] to override `Platform.resolvedExecutable`.
 ///
-/// Throws [NoPlatformEntry] if the resolved directory does not exist.
-Future<List<FileHash>> generateLocalFileHashes({String? path}) {
+/// Throws [NoPlatformEntry] if the directory doesn't
+/// exist.
+Future<List<FileHash>> generateLocalFileHashes({
+  String? path,
+}) {
   return hasher.generateLocalFileHashes(path: path);
 }
