@@ -121,6 +121,174 @@ Update the `update` key in Firebase Remote Config console:
 }
 ```
 
+## Package Reference: `macos_updater`
+
+### Overview
+
+`macos_updater` is a headless Flutter plugin for macOS desktop OTA updates. It downloads only changed files by comparing base64-encoded SHA-256 hashes. No built-in UI — consumers implement `UpdateSource` to connect any backend and build their own UI.
+
+### Consumer Integration
+
+Single import:
+
+```dart
+import 'package:macos_updater/macos_updater.dart';
+```
+
+#### 1. Implement `UpdateSource`
+
+```dart
+class MyUpdateSource implements UpdateSource {
+  @override
+  Future<UpdateDetails?> getUpdateDetails() async {
+    // Fetch from Firebase Remote Config, REST API, etc.
+    final json = await fetchFromBackend();
+    final macosJson = json['macos'] as Map<String, dynamic>?;
+    if (macosJson == null) return null;
+    return UpdateDetails(
+      macos: PlatformUpdateDetails(
+        minimum: macosJson['minimum'] as String,
+        latest: macosJson['latest'] as String,
+        active: macosJson['active'] as bool,
+        url: macosJson['url'] as String?,
+      ),
+      remoteBaseUrl: json['remoteBaseUrl'] as String?,
+    );
+  }
+
+  @override
+  Future<List<FileHash>> getRemoteFileHashes(String remoteBaseUrl) async {
+    final response = await http.get(Uri.parse('$remoteBaseUrl/hashes.json'));
+    final list = jsonDecode(response.body) as List<dynamic>;
+    return list
+        .map((e) => FileHash.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+}
+```
+
+#### 2. Check, Download, Apply
+
+```dart
+// Check for update — returns sealed UpdateCheckResult
+final result = await checkForUpdate(source, enableLogging: true);
+
+switch (result) {
+  case UpToDate():
+    // No update available
+    break;
+  case ForceUpdateRequired(:final info):
+    // Must update — current version below minimum
+    await downloadUpdate(info, onProgress: (p) {
+      print('${p.completedFiles}/${p.totalFiles} files');
+    });
+    await applyUpdate(); // Restarts the app
+    break;
+  case OptionalUpdateAvailable(:final info):
+    // Optional — show UI, let user decide
+    await downloadUpdate(info);
+    await applyUpdate();
+    break;
+}
+```
+
+### Error Handling
+
+Sealed `UpdateError` hierarchy (exhaustive switch):
+
+| Error | When |
+|-------|------|
+| `NetworkError` | HTTP failure during fetch or download |
+| `HashMismatch` | Downloaded file hash doesn't match expected base64 SHA-256 |
+| `NoPlatformEntry` | Bundle directory missing or App Sandbox detected |
+| `IncompatibleVersion` | Remote build not newer than installed |
+| `RestartFailed` | Native restart (file copy / relaunch) failed |
+
+### CLI Commands
+
+#### `dart run macos_updater:release macos`
+
+Builds a Flutter macOS release and copies the `.app` bundle to `dist/`.
+
+**What it does:**
+1. Reads `name` and `version` from `pubspec.yaml` (e.g. `appshot` / `1.0.0+1`)
+2. Runs `flutter build macos` with the resolved `FLUTTER_ROOT`
+3. Copies built `.app` from `build/macos/Build/Products/Release/` to `dist/{buildNumber}/{name}-{version}+{buildNumber}-macos/{name}.app`
+
+**Requirements:**
+- `FLUTTER_ROOT` env var must be set (path to Flutter SDK)
+- Run from the app's root directory (where `pubspec.yaml` lives)
+
+**Extra args:** Passes additional arguments to `flutter build macos` (e.g. `--obfuscate`)
+
+**Output structure:**
+```
+dist/
+└── 1/                                    # buildNumber
+    └── appshot-1.0.0+1-macos/
+        └── appshot.app/
+            └── Contents/
+                ├── MacOS/appshot
+                ├── Frameworks/
+                ├── Resources/
+                └── ...
+```
+
+#### `dart run macos_updater:archive macos`
+
+Copies `.app/Contents/` to a flat archive directory and generates `hashes.json`.
+
+**What it does:**
+1. Finds the latest build number folder in `dist/`
+2. Locates the `.app` bundle for the specified platform
+3. Copies `{name}.app/Contents/` to `dist/{buildNumber}/{version}+{buildNumber}-macos/`
+4. Generates `hashes.json` with base64-encoded SHA-256 hashes for every file
+
+**Output structure:**
+```
+dist/
+└── 1/
+    ├── appshot-1.0.0+1-macos/            # .app bundle (from release)
+    │   └── appshot.app/Contents/...
+    └── 1.0.0+1-macos/                    # archive (from archive)
+        ├── hashes.json
+        ├── MacOS/appshot
+        ├── Frameworks/Flutter.framework/...
+        ├── Resources/...
+        └── ...
+```
+
+### hashes.json Format
+
+**Critical:** All hash generation tools (Dart CLI, shell scripts) MUST produce this exact format.
+
+```json
+[
+  {
+    "filePath": "MacOS/appshot",
+    "hash": "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
+    "length": 12345
+  },
+  {
+    "filePath": "Frameworks/Flutter.framework/Flutter",
+    "hash": "kXr0X1s6Z7c8GtR5e+2hBg8kN7jL4f9mQpV3w1yA0oI=",
+    "length": 67890
+  }
+]
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `filePath` | `String` | Relative path from `Contents/` (forward slashes) |
+| `hash` | `String` | **Base64-encoded** SHA-256 digest (NOT hex) |
+| `length` | `int` | File size in bytes |
+
+**Hash algorithm:** `sha256.convert(fileBytes)` → `base64.encode(digest.bytes)`
+
+Shell equivalent: `openssl dgst -sha256 -binary "$file" | base64`
+
+**WARNING:** `shasum -a 256` produces **hex** output — this is NOT compatible. Always use `openssl dgst -sha256 -binary | base64`.
+
 ## How It Works
 
 ### OTA Delta Updates
