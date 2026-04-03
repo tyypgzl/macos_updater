@@ -64,7 +64,7 @@ dart run macos_updater:archive macos
 - `final class` for models, `sealed class` for errors/results
 - `abstract interface class` for consumer contracts
 - Package imports only (`package:macos_updater/...`), no relative imports
-- `@immutable` from `package:flutter/foundation.dart` (not `package:meta`)
+- `@immutable` from `package:meta/meta.dart` (NOT `package:flutter/foundation.dart` — models must be importable by CLI tools via `dart run`)
 - `/// doc comments` required on all public members
 - `test/**` excluded from analyzer (tests use double quotes from earlier phases)
 

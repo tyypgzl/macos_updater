@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 
 /// Represents a file path and its SHA-256 hash, used
 /// for delta comparison between the local app bundle

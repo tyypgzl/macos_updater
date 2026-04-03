@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^1.6.0
+  meta: ^1.16.0
   path: ^1.9.1
   plugin_platform_interface: ^2.1.8
   pub_semver: ^2.1.4

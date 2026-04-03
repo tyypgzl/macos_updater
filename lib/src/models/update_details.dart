@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:macos_updater/src/models/platform_update_details.dart';
+import 'package:meta/meta.dart';
 
 // Sentinel object used to distinguish "not provided" from "explicitly null"
 // in copyWith for nullable fields.
